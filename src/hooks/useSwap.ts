@@ -166,7 +166,7 @@ export const useSwap = () => {
     }, SWAP_CONFIG.PRICE_REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [fetchPrice, fromToken, toToken, fromAmount, network]);
+  }, [fromToken, toToken, fromAmount, network, evmAddress]);
 
   // Quote creation functionality
   const createQuote = useCallback(

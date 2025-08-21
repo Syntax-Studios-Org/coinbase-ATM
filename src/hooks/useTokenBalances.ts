@@ -80,7 +80,7 @@ export const useTokenBalances = (network: SupportedNetwork, tokens: Token[]) => 
     // Auto-refresh token balances
     const interval = setInterval(fetchBalances, SWAP_CONFIG.BALANCE_REFRESH_INTERVAL);
     return () => clearInterval(interval);
-  }, [fetchBalances]);
+  }, [evmAddress, network, tokens]);
 
   return { data, isLoading, error, refetch: fetchBalances };
 };
