@@ -87,7 +87,7 @@ export function TransactionReceiptModal({
         width: "342px",
         transform: "translateX(calc(-50%))",
         bottom: "20px",
-        backgroundImage: `linear-gradient(0deg, rgba(1, 0, 1, 0.8), rgba(1, 0, 1, 0.8)), url('/review-txn-modal-bg.png')`,
+        backgroundImage: `linear-gradient(0deg, rgba(0,0,0, 0.925), rgba(0,0,0, 0.925)), url('/review-txn-modal-bg.png')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         borderRadius: "20px 20px 0 0",
@@ -102,9 +102,7 @@ export function TransactionReceiptModal({
       <div className="p-6 text-white h-[550px] flex flex-col relative">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <p className="text-sm text-white/50">
-            Review transaction
-          </p>
+          <p className="text-sm text-white/50">Review transaction</p>
           <button
             onClick={handleClose}
             className="w-6 h-6 flex items-center justify-center text-white/50 hover:text-white transition-colors"
@@ -175,6 +173,24 @@ export function TransactionReceiptModal({
             You're swapping {fromAmount} {fromToken?.symbol} to {toAmount}{" "}
             {toToken?.symbol}
           </p>
+          <p className="text-white/60 text-sm mt-2">
+            Transfer usually takes &lt;30s
+          </p>
+        </div>
+
+        {/* Separator - Always visible */}
+        <div className="relative my-6 -mx-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-white/10" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-[#141519] px-3 py-1 text-xs text-white/50 border border-white/10 rounded-full flex items-center">
+              <span>
+                <Image src={"/lock.svg"} width={16} height={16} alt="lock" />
+              </span>{" "}
+              SECURED BY coinbase
+            </span>
+          </div>
         </div>
 
         {/* Combined Transaction Status & Action */}
@@ -185,7 +201,9 @@ export function TransactionReceiptModal({
               : "border-white/20"
           }`}
           style={{
-            backgroundColor: transactionHash ? '#2BC8761A' : 'rgba(255, 255, 255, 0.2)'
+            backgroundColor: transactionHash
+              ? "#2BC8761A"
+              : "rgba(255, 255, 255, 0.2)",
           }}
           onClick={() => {
             if (transactionHash) {
@@ -251,7 +269,9 @@ export function TransactionReceiptModal({
             className={transactionHash ? "opacity-100" : "opacity-50"}
           />
         </div>
-        <p className="text-xs text-white/60 text-center">{getCurrentDateTime()}</p>
+        <p className="text-xs text-white/25 text-center">
+          {getCurrentDateTime()}
+        </p>
       </div>
     </div>
   );
