@@ -66,7 +66,7 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
           <div className="absolute top-8 right-4 z-10">
             <button
               onClick={handleSkip}
-              className="flex items-center gap-2 hover:text-[#2bc876]/80 font-pixelify text-[16px] text-[#2bc876]"
+              className="cursor-pointer flex items-center gap-2 hover:text-[#2bc876]/80 font-pixelify text-[16px] text-[#2bc876]"
             >
               <span>Skip Tutorial</span>
               <Image
@@ -125,7 +125,7 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
             <div className="absolute bottom-0 right-0">
               <button
                 onClick={handleNext}
-                className="flex items-center gap-2 hover:text-[#2bc876]/80 font-pixelify text-[16px] text-[#2bc876]"
+                className="cursor-pointer flex items-center gap-2 hover:text-[#2bc876]/80 font-pixelify text-[16px] text-[#2bc876]"
               >
                 {currentStep === 4 ? "Get Started" : "Next"}
                 <Image
