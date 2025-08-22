@@ -3,12 +3,14 @@
 import { useEvmAddress, useIsSignedIn } from "@coinbase/cdp-hooks";
 import { useTokenBalances } from "@/hooks/useTokenBalances";
 import { ConnectWalletModal } from "./ConnectWalletModal";
+import { TutorialOverlay } from "./TutorialOverlay";
 import { UserHeader } from "./UserHeader";
 import { ActionButtons } from "./ActionButtons";
 import { ATMScreen } from "./ATMContainer";
 import { CTAButton } from "@/components/ui";
 import { useState, useMemo } from "react";
 import { SUPPORTED_NETWORKS } from "@/constants/tokens";
+import { useTutorial } from "@/hooks/useTutorial";
 import Image from "next/image";
 
 interface HomeScreenProps {
@@ -19,6 +21,7 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
   const isSignedIn = useIsSignedIn();
   const evmAddress = useEvmAddress();
   const [showConnectModal, setShowConnectModal] = useState(false);
+  const { showTutorial, isLoading, completeTutorial } = useTutorial();
 
   // Get all tokens from all networks for balance calculation
   const allTokens = useMemo(
@@ -143,6 +146,11 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
       <ConnectWalletModal
         isOpen={showConnectModal}
         onClose={() => setShowConnectModal(false)}
+      />
+
+      <TutorialOverlay
+        isOpen={showTutorial && !isLoading}
+        onClose={completeTutorial}
       />
     </div>
   );
