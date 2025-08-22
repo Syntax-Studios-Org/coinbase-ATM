@@ -58,7 +58,7 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-[390px] mx-auto px-[15px] py-[105px] min-h-screen">
+    <div className="flex flex-col w-full max-w-[390px] mx-auto px-[15px] py-10 md:py-[105px] min-h-screen">
       {/* Main content card */}
       <div
         className="w-full h-[434px] rounded-[20px] overflow-hidden relative p-[1px]"

@@ -1,57 +1,58 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: 'Pixelify_Sans';
-  src: url('/Pixelify_Sans/static/PixelifySans-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
+    font-family: "Pixelify_Sans";
+    src: url("/Pixelify_Sans/static/PixelifySans-Regular.ttf")
+        format("truetype");
+    font-weight: 400;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pixelify_Sans';
-  src: url('/Pixelify_Sans/static/PixelifySans-Medium.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
+    font-family: "Pixelify_Sans";
+    src: url("/Pixelify_Sans/static/PixelifySans-Medium.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pixelify_Sans';
-  src: url('/Pixelify_Sans/static/PixelifySans-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
+    font-family: "Pixelify_Sans";
+    src: url("/Pixelify_Sans/static/PixelifySans-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
 }
 
 :root {
-  --background: #464c4d;
-  --foreground: #ffffff;
-  --primary: #2BC876;
+    --background: #464c4d;
+    --foreground: #ffffff;
+    --primary: #2bc876;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-pixelify: 'Pixelify_Sans', monospace;
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+    --font-pixelify: "Pixelify_Sans", monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  background-image: url('/bg-img.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  min-height: 100vh;
+    background: var(--background);
+    color: var(--foreground);
+    background-image: url("/bg-img.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
 }
 
 /* Hide scrollbars */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
 }
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
+    display: none; /* Safari and Chrome */
 }

@@ -12,7 +12,7 @@ export default function HomePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <LoadingSpinner size="lg" />
-          <p className="text-white/60 font-['Inter']">Initializing...</p>
+          <p className="text-white/60">Initializing...</p>
         </div>
       </div>
     );

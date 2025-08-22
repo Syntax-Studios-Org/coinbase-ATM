@@ -24,9 +24,9 @@ export function ATMContainer() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="md:min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-[390px] mx-auto">
-        <div className="h-[850px] mx-auto relative overflow-hidden">
+        <div className="md:h-[850px] mx-auto relative overflow-hidden">
           {renderScreen()}
         </div>
       </div>
