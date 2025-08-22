@@ -43,7 +43,7 @@ export function UserHeader({ address, balance, isSignedIn }: UserHeaderProps) {
 
           <button
             onClick={handleCopyAddress}
-            className="w-3.5 h-3.5 flex items-center justify-center hover:opacity-80 transition-opacity"
+            className="w-3.5 h-3.5 flex items-center justify-center hover:opacity-80 transition-opacity cursor-pointer"
           >
             <Image width={14} height={14} alt="copy-icon" src={"/copy.svg"} />
           </button>

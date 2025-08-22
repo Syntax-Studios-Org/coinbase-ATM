@@ -150,7 +150,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
   }, [fromToken, fromTokenBalance, fromAmount, network]);
 
   return (
-    <div className="flex flex-col w-full max-w-[390px] mx-auto px-[15px] py-[105px] min-h-screen">
+    <div className="flex flex-col w-full max-w-[390px] mx-auto px-[15px] py-10 md:py-[105px] min-h-screen">
       {/* Main content card */}
       <div
         className="w-full h-[434px] rounded-[20px] overflow-hidden relative p-[1px]"
@@ -171,7 +171,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
             <div className="flex items-center justify-between w-full mb-[18px]">
               <button
                 onClick={() => onNavigate("home")}
-                className="font-semibold text-xs flex gap-x-1"
+                className="cursor-pointer font-semibold text-xs flex gap-x-1"
               >
                 <Image
                   width={12}
@@ -187,7 +187,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
                     ? `${evmAddress.slice(0, 6)}..${evmAddress.slice(-4)}`
                     : "Not Connected"}
                 </div>
-                <button className="text-[#2ac876]">
+                <button className="text-[#2ac876] cursor-pointer">
                   <Image src="/copy.svg" alt="Copy" width={12} height={12} />
                 </button>
               </div>
@@ -286,7 +286,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
                                 setFromToken(token);
                               }
                             }}
-                            className="w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors"
+                            className="cursor-pointer w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors"
                           >
                             <Image
                               src={token.logoUrl!}
@@ -346,6 +346,8 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
                       alt="Exchange"
                       width={16}
                       height={16}
+                      className="cursor-pointer"
+                      onClick={handleSwapTokens}
                     />
 
                     {/* To token pill */}
@@ -441,7 +443,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
                           )}
                         </>
                       ) : (
-                        "~$0.10"
+                        "0.00"
                       )}
                     </span>
                   </div>
@@ -482,7 +484,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
                   : !hasSufficientBalance
                     ? "Insufficient Balance"
                     : !isSwapReady
-                      ? "Select Tokens"
+                      ? "Enter Amount"
                       : "Swap"
         }
         disabled={

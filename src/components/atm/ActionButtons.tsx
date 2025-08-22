@@ -16,7 +16,7 @@ export function ActionButtons({
       {/* Buy Crypto Button */}
       <button
         onClick={onBuyCrypto}
-        className="flex flex-col items-start gap-3 p-3 flex-1 bg-[#2ac876] rounded-[10px] overflow-hidden shadow-[0px_0px_0px_4px_#25b369,0px_0px_0px_3px_#102319] hover:bg-[#25b369] transition-colors"
+        className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 bg-[#2ac876] rounded-[10px] overflow-hidden shadow-[0px_0px_0px_4px_#25b369,0px_0px_0px_3px_#102319] hover:bg-[#25b369] transition-colors"
       >
         <div className="w-4 h-4">
           <Image
@@ -34,7 +34,7 @@ export function ActionButtons({
       {/* Swap Tokens Button */}
       <button
         onClick={onSwapTokens}
-        className="flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] border border-solid border-[#2bc87638] hover:border-[#2bc876] hover:bg-[#2bc87610] transition-all"
+        className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] border border-solid border-[#2bc87638] hover:border-[#2bc876] hover:bg-[#2bc87610] transition-all"
       >
         <div className="w-4 h-4">
           <Image

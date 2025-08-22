@@ -203,7 +203,7 @@ export function TransactionReceiptModal({
           style={{
             backgroundColor: transactionHash
               ? "#2BC8761A"
-              : "rgba(255, 255, 255, 0.2)",
+              : "rgba(255, 255, 255, 0.035)",
           }}
           onClick={() => {
             if (transactionHash) {

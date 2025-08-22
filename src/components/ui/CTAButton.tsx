@@ -12,7 +12,7 @@ export function CTAButton({ onClick, text, disabled = false, className = "" }: C
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-full h-[73px] rounded-2xl border-2 border-black relative ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+      className={`cursor-pointer w-full h-[73px] rounded-2xl border-2 border-black relative ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
       style={{
         backgroundImage: 'linear-gradient(105.55deg, rgba(95, 98, 101, 0.6) 0%, rgba(50, 51, 53, 0.6) 100%), linear-gradient(0deg, rgba(70, 72, 77, 0.4), rgba(70, 72, 77, 0.4)), url(/cta-button-bg-img.png)',
         backgroundSize: 'cover',
