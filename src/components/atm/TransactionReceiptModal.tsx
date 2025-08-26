@@ -170,7 +170,7 @@ export function TransactionReceiptModal({
         {/* Swap Description */}
         <div className="text-center mb-8">
           <p className="text-[#2BC876] font-pixelify text-xl">
-            You're swapping {fromAmount} {fromToken?.symbol} to {toAmount}{" "}
+            You're trading {fromAmount} {fromToken?.symbol} to {toAmount}{" "}
             {toToken?.symbol}
           </p>
           <p className="text-white/60 text-sm mt-2">

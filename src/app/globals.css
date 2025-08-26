@@ -26,6 +26,8 @@
     --background: #464c4d;
     --foreground: #ffffff;
     --primary: #2bc876;
+    
+    /* Theme variables will be injected here by ThemeProvider */
 }
 
 @theme inline {

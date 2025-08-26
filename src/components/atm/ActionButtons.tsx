@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useThemeStyles } from "@/hooks/useThemeStyles";
 
 interface ActionButtonsProps {
   onBuyCrypto: () => void;
@@ -11,12 +12,23 @@ export function ActionButtons({
   onBuyCrypto,
   onSwapTokens,
 }: ActionButtonsProps) {
+  const { getVar } = useThemeStyles();
   return (
     <div className="flex items-start justify-center gap-3 w-full">
       {/* Buy Crypto Button */}
       <button
         onClick={onBuyCrypto}
-        className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 bg-[#2ac876] rounded-[10px] overflow-hidden shadow-[0px_0px_0px_4px_#25b369,0px_0px_0px_3px_#102319] hover:bg-[#25b369] transition-colors"
+        className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] overflow-hidden transition-colors"
+        style={{
+          backgroundColor: getVar('buttonPrimary'),
+          boxShadow: `0px 0px 0px 4px ${getVar('buttonPrimaryHover')}, 0px 0px 0px 3px ${getVar('primaryDark')}`,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = getVar('buttonPrimaryHover');
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = getVar('buttonPrimary');
+        }}
       >
         <div className="w-4 h-4">
           <Image
@@ -26,7 +38,10 @@ export function ActionButtons({
             src={"/buy-crypto.svg"}
           />
         </div>
-        <div className="text-[#09172d] font-pixelify font-semibold text-base tracking-[0] leading-[19.2px]">
+        <div 
+          className="font-pixelify font-semibold text-base tracking-[0] leading-[19.2px]"
+          style={{ color: '#09172d' }}
+        >
           Buy Crypto
         </div>
       </button>
@@ -34,7 +49,19 @@ export function ActionButtons({
       {/* Swap Tokens Button */}
       <button
         onClick={onSwapTokens}
-        className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] border border-solid border-[#2bc87638] hover:border-[#2bc876] hover:bg-[#2bc87610] transition-all"
+        className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] border border-solid transition-all"
+        style={{
+          borderColor: getVar('buttonSecondary'),
+          backgroundColor: 'transparent',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = getVar('buttonSecondaryHover');
+          e.currentTarget.style.backgroundColor = `${getVar('buttonSecondaryHover')}10`;
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = getVar('buttonSecondary');
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }}
       >
         <div className="w-4 h-4">
           <Image
@@ -44,8 +71,11 @@ export function ActionButtons({
             src={"/swap-tokens.svg"}
           />
         </div>
-        <div className="text-[#2ac876] font-pixelify font-semibold text-base tracking-[0] leading-[19.2px]">
-          Swap tokens
+        <div 
+          className="font-pixelify font-semibold text-base tracking-[0] leading-[19.2px]"
+          style={{ color: getVar('textAccent') }}
+        >
+          Trade tokens
         </div>
       </button>
     </div>

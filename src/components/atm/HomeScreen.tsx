@@ -11,6 +11,7 @@ import { CTAButton } from "@/components/ui";
 import { useState, useMemo } from "react";
 import { SUPPORTED_NETWORKS } from "@/constants/tokens";
 import { useTutorial } from "@/hooks/useTutorial";
+import { useThemeStyles } from "@/hooks/useThemeStyles";
 import Image from "next/image";
 
 interface HomeScreenProps {
@@ -22,6 +23,7 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
   const evmAddress = useEvmAddress();
   const [showConnectModal, setShowConnectModal] = useState(false);
   const { showTutorial, isLoading, completeTutorial } = useTutorial();
+  const { getVar, theme } = useThemeStyles();
 
   // Get all tokens from all networks for balance calculation
   const allTokens = useMemo(
@@ -66,14 +68,13 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
       <div
         className="w-full h-[434px] rounded-[20px] overflow-hidden relative p-[1px]"
         style={{
-          background: "linear-gradient(103.02deg, #1E1E1E 0%, #3D3C3C 101.44%)",
+          background: theme.cardBorder,
         }}
       >
         <div
           className="w-full h-full rounded-[20px] relative"
           style={{
-            background:
-              "radial-gradient(50% 294.9% at 50% 50%, #09140E 0%, #050A07 100%)",
+            background: theme.cardBackground,
             boxShadow: "0px 0px 14px 0px #00000026 inset",
           }}
         >
@@ -99,7 +100,15 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
                 </div>
 
                 {/* Welcome text */}
-                <p className="w-[286px] bg-gradient-to-r from-[#2bc876] to-[#2bc87682] bg-clip-text text-transparent font-pixelify font-normal text-2xl tracking-[0.48px] leading-[28.8px]">
+                <p 
+                  className="w-[286px] bg-clip-text text-transparent font-pixelify font-normal text-2xl tracking-[0.48px] leading-[28.8px]"
+                  style={{
+                    background: `linear-gradient(to right, ${getVar('welcomeGradientStart')}, ${getVar('welcomeGradientEnd')})`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text'
+                  }}
+                >
                   Welcome! Choose an action to continue...
                 </p>
               </div>
@@ -119,26 +128,39 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
         <CTAButton onClick={handleConnectWallet} className="mt-[10px]" text="Connect Wallet"/>
       )}
       {isSignedIn && (
-        <CTAButton onClick={handleSwapTokens} className="mt-[10px]" text="Swap Tokens"/>
+        <CTAButton onClick={handleSwapTokens} className="mt-[10px]" text="Trade Tokens"/>
       )}
 
       {/* Bottom section */}
       <div className="flex items-center justify-center mt-[20px] mb-2">
-        <div className="text-white font-medium text-[9px] text-center tracking-[2.75px] leading-[15px] mix-blend-color-dodge opacity-32">
+        <div 
+          className="font-medium text-[9px] text-center tracking-[2.75px] leading-[15px] mix-blend-color-dodge opacity-32"
+          style={{ color: getVar('textPrimary') }}
+        >
           COLLECT YOUR CRYPTO
         </div>
       </div>
 
       {/* Bottom card */}
-      <div className="w-full flex flex-col items-center justify-center gap-2.5 p-2 rounded-lg border-[0.7px] border-white/20">
-        <div className="w-full h-[26px] rounded-[3px] p-px relative" style={{
-          background: 'linear-gradient(103.02deg, #1E1E1E 0%, #3D3C3C 101.44%)'
-        }}>
-          <div className="w-full h-full rounded-[3px] relative" style={{
-            background: 'linear-gradient(104.62deg, #1A1A1A 0.45%, #090909 100%)',
-            boxShadow: '0px 0px 18px 0px #000000E5 inset'
-          }}>
-            <div className="absolute w-px h-[11px] -top-3 left-1/2 transform -translate-x-1/2 mix-blend-color-dodge bg-white/20"></div>
+      <div 
+        className="w-full flex flex-col items-center justify-center gap-2.5 p-2 rounded-lg border-[0.7px]"
+        style={{ borderColor: getVar('borderPrimary') }}
+      >
+        <div 
+          className="w-full h-[26px] rounded-[3px] p-px relative" 
+          style={{ background: theme.cardBorder }}
+        >
+          <div 
+            className="w-full h-full rounded-[3px] relative" 
+            style={{
+              background: 'linear-gradient(104.62deg, #1A1A1A 0.45%, #090909 100%)',
+              boxShadow: '0px 0px 18px 0px #000000E5 inset'
+            }}
+          >
+            <div 
+              className="absolute w-px h-[11px] -top-3 left-1/2 transform -translate-x-1/2 mix-blend-color-dodge"
+              style={{ backgroundColor: getVar('borderPrimary') }}
+            ></div>
           </div>
         </div>
       </div>

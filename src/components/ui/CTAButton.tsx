@@ -1,4 +1,5 @@
 import React from 'react';
+import { useThemeStyles } from '@/hooks/useThemeStyles';
 
 interface CTAButtonProps {
   onClick: () => void;
@@ -8,6 +9,7 @@ interface CTAButtonProps {
 }
 
 export function CTAButton({ onClick, text, disabled = false, className = "" }: CTAButtonProps) {
+  const { getVar } = useThemeStyles();
   return (
     <button
       onClick={onClick}
@@ -25,7 +27,7 @@ export function CTAButton({ onClick, text, disabled = false, className = "" }: C
         <p
           className="flex-1 font-semibold text-sm text-center tracking-[0] leading-6"
           style={{
-            background: 'linear-gradient(100.38deg, #2BC876 -2.24%, #2CD37C 92.83%)',
+            background: `linear-gradient(100.38deg, ${getVar('gradientStart')} -2.24%, ${getVar('gradientEnd')} 92.83%)`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text'

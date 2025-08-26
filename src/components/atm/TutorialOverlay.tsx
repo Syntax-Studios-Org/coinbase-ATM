@@ -11,17 +11,17 @@ interface TutorialOverlayProps {
 const TUTORIAL_STEPS = [
   {
     id: 1,
-    text: "Welcome! to the Coinbase ATM here you can swap and buy tokens on base.",
+    text: "Welcome! to the Coinbase ATM here you can trade and buy tokens on base.",
     image: null,
   },
   {
     id: 2,
-    text: "Easily swap your tokens with just a few taps",
+    text: "Easily trade your tokens with just a few taps",
     image: "/panda-swap.svg",
   },
   {
     id: 3,
-    text: "Swaps are secure, simple and fast",
+    text: "Trades are secure, simple and fast",
     image: "/panda-lock.svg",
   },
   {

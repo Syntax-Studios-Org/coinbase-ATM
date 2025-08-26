@@ -1,6 +1,7 @@
 "use client";
 
 import { truncateAddress } from "@/utils/format";
+import { useThemeStyles } from "@/hooks/useThemeStyles";
 import Image from "next/image";
 
 interface UserHeaderProps {
@@ -10,17 +11,24 @@ interface UserHeaderProps {
 }
 
 export function UserHeader({ address, balance, isSignedIn }: UserHeaderProps) {
+  const { getVar } = useThemeStyles();
   if (!isSignedIn || !address) {
     return (
       <div className="flex flex-col items-center gap-[18px] w-full">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-1.5">
-            <div className="text-[#2ac876] font-semibold text-xs text-center tracking-[-0.24px] leading-3">
+            <div 
+              className="font-semibold text-xs text-center tracking-[-0.24px] leading-3"
+              style={{ color: getVar('textAccent') }}
+            >
               Not Connected
             </div>
           </div>
         </div>
-        <div className="w-full h-px bg-white/20"></div>
+        <div 
+          className="w-full h-px"
+          style={{ backgroundColor: getVar('borderPrimary') }}
+        ></div>
       </div>
     );
   }
@@ -35,11 +43,17 @@ export function UserHeader({ address, balance, isSignedIn }: UserHeaderProps) {
     <div className="flex flex-col items-center gap-[18px] w-full">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-1.5">
-          <div className="text-[#2ac876] font-inter font-semibold text-xs text-center tracking-[-0.24px] leading-3">
+          <div 
+            className="font-inter font-semibold text-xs text-center tracking-[-0.24px] leading-3"
+            style={{ color: getVar('textAccent') }}
+          >
             {truncateAddress(address)}
           </div>
 
-          <div className="w-px h-[11px] bg-white/20"></div>
+          <div 
+            className="w-px h-[11px]"
+            style={{ backgroundColor: getVar('borderPrimary') }}
+          ></div>
 
           <button
             onClick={handleCopyAddress}
@@ -50,7 +64,10 @@ export function UserHeader({ address, balance, isSignedIn }: UserHeaderProps) {
         </div>
       </div>
 
-      <div className="w-full h-px bg-white/10"></div>
+      <div 
+        className="w-full h-px"
+        style={{ backgroundColor: getVar('borderSecondary') }}
+      ></div>
     </div>
   );
 }

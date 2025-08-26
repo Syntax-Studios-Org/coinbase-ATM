@@ -1,7 +1,6 @@
 export const APP_CONFIG = {
-  name: "Coinbase CDP Swap Widget",
-  description:
-    "A production-ready swap widget built with Coinbase Developer Platform",
+  name: "Coinbase ATM trade",
+  description: "A production-ready trade UI built with Coinbase Developer Platform",
   version: "1.0.0",
   author: "Coinbase Developer Platform",
 } as const;

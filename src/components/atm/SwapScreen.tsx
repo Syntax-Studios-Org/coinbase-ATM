@@ -141,9 +141,13 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
   const hasSufficientBalance = useMemo(() => {
     if (!fromToken || !fromTokenBalance || !fromAmount) return true;
 
+    // Validate and normalize the amount
+    const numericAmount = parseFloat(fromAmount);
+    if (isNaN(numericAmount) || numericAmount <= 0) return true;
+
     const decimals = getTokenDecimals(fromToken.address, network);
     const requiredAmount = parseUnits(
-      parseFloat(fromAmount).toString(),
+      numericAmount.toString(),
       decimals,
     );
     return BigInt(fromTokenBalance.balance) >= requiredAmount;
@@ -212,7 +216,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
                 <p className="text-[#2BC876] font-pixelify font-normal text-3xl text-left">
                   {selectingToToken
                     ? "Select token to receive."
-                    : "Select a token to swap."}
+                    : "Select a token to trade."}
                 </p>
 
                 {/* Search bar */}
@@ -315,9 +319,9 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
             ) : (
               /* Swap interface */
               <div className="flex flex-col h-full">
-                {/* You're swapping section */}
+                {/* You're trading section */}
                 <div className="mb-6">
-                  <p className="text-white/30 text-sm mb-3">You're swapping</p>
+                  <p className="text-white/30 text-sm mb-3">You're trading</p>
                   <div className="flex items-center gap-3 w-full justify-between">
                     {/* From token pill */}
                     <button
@@ -485,7 +489,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
                     ? "Insufficient Balance"
                     : !isSwapReady
                       ? "Enter Amount"
-                      : "Swap"
+                      : "Trade"
         }
         disabled={
           isPriceLoading ||

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useThemeStyles } from "@/hooks/useThemeStyles";
 import type { Token, TokenBalance } from "@/types/swap";
 import type { SupportedNetwork } from "@/constants/tokens";
 
@@ -33,24 +34,49 @@ export function SwapInput({
   hasError = false,
   onNavigateToTokenSelector
 }: SwapInputProps) {
+  const { getVar } = useThemeStyles();
   
   const handleTokenSelectorClick = () => {
     onNavigateToTokenSelector();
   };
 
   return (
-    <div className={`p-4 bg-[#141519] rounded-2xl w-full ${hasError ? 'border border-[#DF6A70]' : 'border border-[#2bc87638]'}`}>
+    <div 
+      className="p-4 rounded-2xl w-full border"
+      style={{
+        backgroundColor: getVar('inputBackground'),
+        borderColor: hasError ? getVar('borderError') : getVar('inputBorder'),
+      }}
+    >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-white/60 text-sm tracking-tight font-['Inter']">{label}</span>
+        <span 
+          className="text-sm tracking-tight font-['Inter']"
+          style={{ color: getVar('textMuted') }}
+        >
+          {label}
+        </span>
         {token && balance && (
           <div className="flex items-center space-x-2">
-            <span className="text-white/60 text-sm tracking-tight font-['Inter']">
+            <span 
+              className="text-sm tracking-tight font-['Inter']"
+              style={{ color: getVar('textMuted') }}
+            >
               Bal: {(Number(balance.balance) / Math.pow(10, token.decimals)).toFixed(6)}
             </span>
             {onMaxClick && balance && (
               <button
                 onClick={onMaxClick}
-                className="text-[#2bc876] text-xs px-2 py-1 rounded-md transition-colors hover:bg-[#2bc87610] font-['Inter']"
+                className="text-xs px-2 py-1 rounded-md transition-colors font-['Inter']"
+                style={{ 
+                  color: getVar('textAccent'),
+                  backgroundColor: 'transparent',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = `${getVar('textAccent')}10`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 MAX
               </button>
@@ -78,9 +104,11 @@ export function SwapInput({
             }
           } : undefined}
           readOnly={readOnly}
-          className={`bg-transparent placeholder-white/40 border-none outline-none flex-1 max-w-[180px] text-2xl font-medium font-['Inter'] ${
-            hasError ? 'text-[#DF6A70]' : 'text-white'
-          }`}
+          className="bg-transparent border-none outline-none flex-1 max-w-[180px] text-2xl font-medium font-['Inter']"
+          style={{
+            color: hasError ? getVar('textError') : getVar('textPrimary'),
+            '::placeholder': { color: getVar('inputPlaceholder') }
+          }}
           min="0"
           step="any"
         />
@@ -88,7 +116,16 @@ export function SwapInput({
         {/* Token Selector Button */}
         <button
           onClick={handleTokenSelectorClick}
-          className="flex items-center gap-2 px-3 py-2 bg-[#2bc876] rounded-lg hover:bg-[#25b369] transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors"
+          style={{
+            backgroundColor: getVar('buttonPrimary'),
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = getVar('buttonPrimaryHover');
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = getVar('buttonPrimary');
+          }}
         >
           {token ? (
             <>
@@ -103,12 +140,18 @@ export function SwapInput({
                   e.currentTarget.src = '/icons/eth.svg';
                 }}
               />
-              <span className="text-[#09172d] font-['Inter'] font-semibold text-sm">
+              <span 
+                className="font-['Inter'] font-semibold text-sm"
+                style={{ color: '#09172d' }}
+              >
                 {token.symbol}
               </span>
             </>
           ) : (
-            <span className="text-[#09172d] font-['Inter'] font-semibold text-sm">
+            <span 
+              className="font-['Inter'] font-semibold text-sm"
+              style={{ color: '#09172d' }}
+            >
               Select Token
             </span>
           )}
