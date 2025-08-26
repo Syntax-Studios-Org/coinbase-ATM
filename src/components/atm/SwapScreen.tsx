@@ -11,6 +11,7 @@ import { getTokenDecimals, getTokenSymbol } from "@/utils/tokens";
 import { ATMScreen } from "./ATMContainer";
 import { SwapInput } from "./SwapInput";
 import { TransactionReceiptModal } from "./TransactionReceiptModal";
+import { TokenSelectorScreen } from "./TokenSelectorScreen";
 import { Button, CTAButton } from "@/components/ui";
 import Image from "next/image";
 
@@ -23,7 +24,6 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string | undefined>();
   const [selectingToToken, setSelectingToToken] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     // State
@@ -63,7 +63,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
       ),
     [network],
   );
-  const { data: balances } = useTokenBalances(
+  const { data: balances, totalUsdBalance } = useTokenBalances(
     network as SupportedNetwork,
     networkTokens,
   );
@@ -201,121 +201,22 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
 
             {!fromToken || selectingToToken ? (
               /* Token selection interface */
-              <div className="flex flex-col items-start gap-4 w-full flex-1">
-                {/* Swap icon */}
-                <div className="w-8 h-8">
-                  <Image
-                    src="/swap-page-icon.svg"
-                    alt="Swap Icon"
-                    width={32}
-                    height={32}
-                  />
-                </div>
-
-                {/* Title text */}
-                <p className="text-[#2BC876] font-pixelify font-normal text-3xl text-left">
-                  {selectingToToken
-                    ? "Select token to receive."
-                    : "Select a token to trade."}
-                </p>
-
-                {/* Search bar */}
-                <div className="w-full relative">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                    <Image
-                      src="/search.svg"
-                      alt="Search"
-                      width={16}
-                      height={16}
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search tokens..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 border rounded-full text-white placeholder-white/50 focus:outline-none focus:border-[#2bc876] bg-[#2BC8761A]/20"
-                    style={{
-                      borderColor: "#2BC8761A",
-                    }}
-                  />
-                </div>
-
-                {/* Token list */}
-                <div className="w-full flex-1 overflow-y-auto max-h-[200px] scrollbar-hide">
-                  <div className="space-y-1">
-                    {networkTokens
-                      .filter((token) => {
-                        // Filter out the current fromToken when selecting toToken
-                        const isValidForSelection = selectingToToken
-                          ? token.address !== fromToken?.address
-                          : true;
-
-                        // Filter based on search query
-                        const matchesSearch =
-                          !searchQuery ||
-                          token.name
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase()) ||
-                          token.symbol
-                            .toLowerCase()
-                            .includes(searchQuery.toLowerCase());
-
-                        return isValidForSelection && matchesSearch;
-                      })
-                      .map((token) => {
-                        const balance = balances?.find(
-                          (b) =>
-                            b.token.address.toLowerCase() ===
-                            token.address.toLowerCase(),
-                        );
-                        const formattedBalance = balance
-                          ? parseFloat(
-                              formatUnits(
-                                BigInt(balance.balance),
-                                token.decimals,
-                              ),
-                            )
-                              .toFixed(8)
-                              .replace(/\.?0+$/, "")
-                          : "0";
-                        return (
-                          <button
-                            key={token.address}
-                            onClick={() => {
-                              if (selectingToToken) {
-                                setToToken(token);
-                                setSelectingToToken(false);
-                              } else {
-                                setFromToken(token);
-                              }
-                            }}
-                            className="cursor-pointer w-full flex items-center gap-3 p-3 hover:bg-white/5 rounded-lg transition-colors"
-                          >
-                            <Image
-                              src={token.logoUrl!}
-                              alt={token.name}
-                              width={32}
-                              height={32}
-                              className="rounded-full"
-                            />
-                            <div className="flex-1 text-left">
-                              <div className="text-white font-medium text-sm font-pixelify">
-                                {token.name}
-                              </div>
-                              <div className="text-white/60 text-xs">
-                                {token.symbol}
-                              </div>
-                            </div>
-                            <div className="text-white/80 text-sm">
-                              {formattedBalance}
-                            </div>
-                          </button>
-                        );
-                      })}
-                  </div>
-                </div>
-              </div>
+              <TokenSelectorScreen
+                onNavigate={onNavigate}
+                onTokenSelect={(token) => {
+                  if (selectingToToken) {
+                    setToToken(token);
+                    setSelectingToToken(false);
+                  } else {
+                    setFromToken(token);
+                  }
+                }}
+                excludeToken={selectingToToken ? fromToken : null}
+                network={network as SupportedNetwork}
+                title={selectingToToken ? "Select Token to Buy" : "Select Token to Sell"}
+                balances={balances}
+                totalUsdBalance={totalUsdBalance}
+              />
             ) : (
               /* Swap interface */
               <div className="flex flex-col h-full">

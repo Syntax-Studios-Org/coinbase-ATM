@@ -6,6 +6,7 @@ export interface Token {
   name: string;
   decimals: number;
   logoUrl?: string;
+  coingeckoTokenId: string;
 }
 
 export interface SwapQuote {

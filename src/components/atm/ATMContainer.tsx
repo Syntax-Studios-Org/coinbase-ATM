@@ -16,8 +16,6 @@ export function ATMContainer() {
         return <HomeScreen onNavigate={setCurrentScreen} />;
       case "swap":
         return <SwapScreen onNavigate={setCurrentScreen} />;
-      case "token-selector":
-        return <TokenSelectorScreen onNavigate={setCurrentScreen} />;
       default:
         return <HomeScreen onNavigate={setCurrentScreen} />;
     }
