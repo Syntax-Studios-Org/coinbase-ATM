@@ -19,6 +19,7 @@ interface TokenSelectorScreenProps {
   title?: string;
   balances?: any[];
   totalUsdBalance?: number;
+  text?: string;
 }
 
 export function TokenSelectorScreen({
@@ -29,6 +30,7 @@ export function TokenSelectorScreen({
   title = "Select Token",
   balances = [],
   totalUsdBalance = 0,
+  text,
 }: TokenSelectorScreenProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { getVar } = useThemeStyles();
@@ -61,26 +63,41 @@ export function TokenSelectorScreen({
     <div className="flex flex-col h-full min-w-full py-4">
       {/* Token selection interface */}
       <div className="flex flex-col items-center gap-4 w-full flex-1">
-        {/* Title text */}
-        <p
-          className="text-sm"
-          style={{
-            color: getVar("textSecondary"),
-          }}
-        >
-          Your balance
-        </p>
-        <div className="flex items-start max-h-[56px] leading-none">
-          <p className="font-pixelify font-normal text-2xl align-top opacity-60" style={{ color: getVar("textAccent") }}>
-            $
-          </p>
-          <p
-            className="font-pixelify font-normal text-[56px] leading-none align-top"
-            style={{ color: getVar("textAccent") }}
-          >
-            {totalUsdBalance.toFixed(2)}
-          </p>
-        </div>
+        {/* Title text or balance display */}
+        {text ? (
+          <div className="w-full text-left">
+            <p
+              className="font-pixelify text-2xl"
+              style={{
+                color: getVar("primary"),
+              }}
+            >
+              {text}
+            </p>
+          </div>
+        ) : (
+          <>
+            <p
+              className="text-sm"
+              style={{
+                color: getVar("textSecondary"),
+              }}
+            >
+              Your balance
+            </p>
+            <div className="flex items-start max-h-[56px] leading-none">
+              <p className="font-pixelify font-normal text-2xl align-top opacity-60" style={{ color: getVar("textAccent") }}>
+                $
+              </p>
+              <p
+                className="font-pixelify font-normal text-[56px] leading-none align-top"
+                style={{ color: getVar("textAccent") }}
+              >
+                {totalUsdBalance.toFixed(2)}
+              </p>
+            </div>
+          </>
+        )}
 
         {/* Search bar */}
         <div className="w-full relative">

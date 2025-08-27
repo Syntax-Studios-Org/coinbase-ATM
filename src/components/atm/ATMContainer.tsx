@@ -15,6 +15,7 @@ import {
   ArrowLeftRight,
 } from "./ActionButtons";
 import { DepositTokenScreen } from "./DepositTokenScreen";
+import { BuyWithCardScreen } from "./BuyWithCardScreen";
 
 export type { ATMScreen };
 import { BottomSection } from "./BottomSection";
@@ -29,6 +30,7 @@ export function ATMContainer() {
   const [authScreen, setAuthScreen] = useState<AuthScreen>("signin");
   const [showSwapScreen, setShowSwapScreen] = useState(false);
   const [showDepositScreen, setShowDepositScreen] = useState(false);
+  const [showBuyWithCardScreen, setShowBuyWithCardScreen] = useState(false);
   const address = useEvmAddress();
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -52,7 +54,7 @@ export function ATMContainer() {
     }, 0) || 0;
 
   const handleBuyCrypto = () => {
-    console.log("Navigate to buy crypto");
+    setShowBuyWithCardScreen(true);
   };
 
   const handleSendCrypto = () => {
@@ -166,7 +168,16 @@ export function ATMContainer() {
       case "home":
         if (showDepositScreen) {
           return renderCardWrapper(
-            <DepositTokenScreen onNavigate={() => setShowDepositScreen(false)} />
+            <DepositTokenScreen
+              onNavigate={() => setShowDepositScreen(false)}
+            />,
+          );
+        }
+        if (showBuyWithCardScreen) {
+          return renderCardWrapper(
+            <BuyWithCardScreen
+              onNavigate={() => setShowBuyWithCardScreen(false)}
+            />,
           );
         }
         return renderCardWrapper(
@@ -193,7 +204,7 @@ export function ATMContainer() {
               onClick: handleDepositToken,
               variant: "primary" as const,
             }}
-          />
+          />,
         );
 
       case "swap":
@@ -256,7 +267,8 @@ export function ATMContainer() {
             onTabChange={(tab: ATMScreen) => {
               setCurrentTab(tab);
               setShowSwapScreen(false);
-              setShowDepositScreen(false)
+              setShowDepositScreen(false);
+              setShowBuyWithCardScreen(false);
             }}
             isSignedIn={isSignedIn}
           />
