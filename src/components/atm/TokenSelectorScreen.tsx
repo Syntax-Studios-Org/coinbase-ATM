@@ -8,6 +8,8 @@ import { SUPPORTED_NETWORKS } from "@/constants/tokens";
 import type { Token } from "@/types/swap";
 import type { SupportedNetwork } from "@/constants/tokens";
 import { ATMScreen } from "./ATMContainer";
+import { UserHeader } from "./UserHeader";
+import { useEvmAddress } from "@coinbase/cdp-hooks";
 
 interface TokenSelectorScreenProps {
   onNavigate: (screen: ATMScreen) => void;
@@ -30,6 +32,7 @@ export function TokenSelectorScreen({
 }: TokenSelectorScreenProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { getVar } = useThemeStyles();
+  const address = useEvmAddress()
 
   // Get tokens for current network
   const networkTokens = Object.values(SUPPORTED_NETWORKS[network]);
@@ -53,7 +56,9 @@ export function TokenSelectorScreen({
   }, [networkTokens, searchQuery, excludeToken]);
 
   return (
-    <div className="flex flex-col h-full">
+    <>
+      <UserHeader address={address} balance={totalUsdBalance} isSignedIn={true} />
+    <div className="flex flex-col h-full min-w-full py-4">
       {/* Token selection interface */}
       <div className="flex flex-col items-center gap-4 w-full flex-1">
         {/* Title text */}
@@ -155,11 +160,12 @@ export function TokenSelectorScreen({
                       className="text-xs"
                       style={{ color: getVar("textMuted") }}
                     >
-                      {formattedBalance} ${token.symbol}
+                      {formattedBalance} {token.symbol}
                     </div>
                   </div>
                   <div
-                    className="text-sm text-white"
+                    className="text-sm"
+                    style={{ color: getVar("textPrimary") }}
                   >
                     {tokenUsdValueFormatted}
                   </div>
@@ -170,5 +176,6 @@ export function TokenSelectorScreen({
         </div>
       </div>
     </div>
+    </>
   );
 }

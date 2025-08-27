@@ -1,83 +1,79 @@
 "use client";
 
-import Image from "next/image";
+import { CreditCard, DownloadCloud, Send, ArrowLeftRight } from "lucide-react";
 import { useThemeStyles } from "@/hooks/useThemeStyles";
 
+interface ActionButton {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  variant: 'primary' | 'secondary';
+}
+
 interface ActionButtonsProps {
-  onBuyCrypto: () => void;
-  onSwapTokens: () => void;
+  leftButton: ActionButton;
+  rightButton: ActionButton;
 }
 
 export function ActionButtons({
-  onBuyCrypto,
-  onSwapTokens,
+  leftButton,
+  rightButton,
 }: ActionButtonsProps) {
   const { getVar } = useThemeStyles();
-  return (
-    <div className="flex items-start justify-center gap-3 w-full">
-      {/* Buy Crypto Button */}
+
+  const renderButton = (button: ActionButton) => {
+    const isPrimary = button.variant === 'primary';
+
+    return (
       <button
-        onClick={onBuyCrypto}
-        className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] overflow-hidden transition-colors"
-        style={{
+        onClick={button.onClick}
+        className={`cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] transition-all ${
+          isPrimary ? 'overflow-hidden' : 'border border-solid'
+        }`}
+        style={isPrimary ? {
           backgroundColor: getVar('buttonPrimary'),
           boxShadow: `0px 0px 0px 4px ${getVar('buttonPrimaryHover')}, 0px 0px 0px 3px ${getVar('primaryDark')}`,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = getVar('buttonPrimaryHover');
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = getVar('buttonPrimary');
-        }}
-      >
-        <div className="w-4 h-4">
-          <Image
-            width={16}
-            height={16}
-            alt="buy-icon"
-            src={"/buy-crypto.svg"}
-          />
-        </div>
-        <div 
-          className="font-pixelify font-semibold text-base tracking-[0] leading-[19.2px]"
-          style={{ color: '#09172d' }}
-        >
-          Buy Crypto
-        </div>
-      </button>
-
-      {/* Swap Tokens Button */}
-      <button
-        onClick={onSwapTokens}
-        className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] border border-solid transition-all"
-        style={{
+        } : {
           borderColor: getVar('buttonSecondary'),
           backgroundColor: 'transparent',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = getVar('buttonSecondaryHover');
-          e.currentTarget.style.backgroundColor = `${getVar('buttonSecondaryHover')}10`;
+          if (isPrimary) {
+            e.currentTarget.style.backgroundColor = getVar('buttonPrimaryHover');
+          } else {
+            e.currentTarget.style.borderColor = getVar('buttonSecondaryHover');
+            e.currentTarget.style.backgroundColor = `${getVar('buttonSecondaryHover')}10`;
+          }
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = getVar('buttonSecondary');
-          e.currentTarget.style.backgroundColor = 'transparent';
+          if (isPrimary) {
+            e.currentTarget.style.backgroundColor = getVar('buttonPrimary');
+          } else {
+            e.currentTarget.style.borderColor = getVar('buttonSecondary');
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }
         }}
       >
         <div className="w-4 h-4">
-          <Image
-            width={16}
-            height={16}
-            alt="swap-icon"
-            src={"/swap-tokens.svg"}
-          />
+          {button.icon}
         </div>
-        <div 
+        <div
           className="font-pixelify font-semibold text-base tracking-[0] leading-[19.2px]"
-          style={{ color: getVar('textAccent') }}
+          style={{ color: isPrimary ? '#09172d' : getVar('textAccent') }}
         >
-          Trade tokens
+          {button.label}
         </div>
       </button>
+    );
+  };
+
+  return (
+    <div className="flex items-start justify-center gap-3 w-full">
+      {renderButton(leftButton)}
+      {renderButton(rightButton)}
     </div>
   );
 }
+
+// Export icon components for easy use
+export { CreditCard, DownloadCloud, Send, ArrowLeftRight };

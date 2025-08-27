@@ -1,5 +1,6 @@
 // Export all UI components from a single file for easier imports
 export { Button, buttonVariants } from "./Button";
+export { ATMButton } from "./ATMButton";
 export { CTAButton } from "./CTAButton";
 export { Input, Label } from "./Input";
 export { LoadingSpinner, spinnerVariants } from "./LoadingSpinner";

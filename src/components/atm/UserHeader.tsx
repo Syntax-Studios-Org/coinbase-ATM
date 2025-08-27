@@ -17,7 +17,7 @@ export function UserHeader({ address, balance, isSignedIn }: UserHeaderProps) {
       <div className="flex flex-col items-center gap-[18px] w-full">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-1.5">
-            <div 
+            <div
               className="font-semibold text-xs text-center tracking-[-0.24px] leading-3"
               style={{ color: getVar('textAccent') }}
             >
@@ -25,7 +25,7 @@ export function UserHeader({ address, balance, isSignedIn }: UserHeaderProps) {
             </div>
           </div>
         </div>
-        <div 
+        <div
           className="w-full h-px"
           style={{ backgroundColor: getVar('borderPrimary') }}
         ></div>
@@ -43,14 +43,14 @@ export function UserHeader({ address, balance, isSignedIn }: UserHeaderProps) {
     <div className="flex flex-col items-center gap-[18px] w-full">
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-1.5">
-          <div 
+          <div
             className="font-inter font-semibold text-xs text-center tracking-[-0.24px] leading-3"
             style={{ color: getVar('textAccent') }}
           >
             {truncateAddress(address)}
           </div>
 
-          <div 
+          <div
             className="w-px h-[11px]"
             style={{ backgroundColor: getVar('borderPrimary') }}
           ></div>
@@ -62,9 +62,12 @@ export function UserHeader({ address, balance, isSignedIn }: UserHeaderProps) {
             <Image width={14} height={14} alt="copy-icon" src={"/copy.svg"} />
           </button>
         </div>
+        <p className="text-xs" style={{
+          color: getVar("textMuted")
+        }}>Balance: ${balance.toFixed(2)}</p>
       </div>
 
-      <div 
+      <div
         className="w-full h-px"
         style={{ backgroundColor: getVar('borderSecondary') }}
       ></div>

@@ -154,13 +154,14 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
   }, [fromToken, fromTokenBalance, fromAmount, network]);
 
   return (
-    <div className="flex flex-col w-full max-w-[390px] mx-auto px-[15px] py-10 md:py-[105px] min-h-screen">
+    // <div className="flex flex-col w-full max-w-[390px] mx-auto px-[15px] py-10 md:py-[105px] min-h-screen">
+    <>
       {/* Main content card */}
-      <div
-        className="w-full h-[434px] rounded-[20px] overflow-hidden relative p-[1px]"
-        style={{
-          background: "linear-gradient(103.02deg, #1E1E1E 0%, #3D3C3C 101.44%)",
-        }}
+      <
+        // className="w-full h-[434px] rounded-[20px] overflow-hidden relative p-[1px]"
+        // style={{
+        //   background: "linear-gradient(103.02deg, #1E1E1E 0%, #3D3C3C 101.44%)",
+        // }}
       >
         <div
           className="w-full h-full rounded-[20px] relative"
@@ -170,35 +171,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
             boxShadow: "0px 0px 14px 0px #00000026 inset",
           }}
         >
-          <div className="relative z-10 flex flex-col pt-[18px] pb-6 px-6 h-full">
-            {/* Header with back button and address */}
-            <div className="flex items-center justify-between w-full mb-[18px]">
-              <button
-                onClick={() => onNavigate("home")}
-                className="cursor-pointer font-semibold text-xs flex gap-x-1"
-              >
-                <Image
-                  width={12}
-                  height={12}
-                  src={"/back-arrow.svg"}
-                  alt="back"
-                />{" "}
-                <span className="text-white/30">Go back</span>
-              </button>
-              <div className="flex items-center gap-2">
-                <div className="text-[#2ac876] font-semibold text-xs">
-                  {evmAddress
-                    ? `${evmAddress.slice(0, 6)}..${evmAddress.slice(-4)}`
-                    : "Not Connected"}
-                </div>
-                <button className="text-[#2ac876] cursor-pointer">
-                  <Image src="/copy.svg" alt="Copy" width={12} height={12} />
-                </button>
-              </div>
-            </div>
-
-            <div className="w-full h-px bg-white/10 mb-6"></div>
-
+          <div className="relative z-10 flex flex-col h-full">
             {!fromToken || selectingToToken ? (
               /* Token selection interface */
               <TokenSelectorScreen
@@ -361,7 +334,7 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
             )}
           </div>
         </div>
-      </div>
+      </>
 
       {/* CTA Button */}
       <CTAButton
@@ -449,6 +422,6 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
           isExecuting={isExecutionLoading}
         />
       </div>
-    </div>
+    </>
   );
 }
