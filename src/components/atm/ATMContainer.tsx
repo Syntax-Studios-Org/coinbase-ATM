@@ -17,6 +17,7 @@ import {
 import { DepositTokenScreen } from "./DepositTokenScreen";
 import { BuyWithCardScreen } from "./BuyWithCardScreen";
 import { SendCryptoScreen } from "./SendCryptoScreen";
+import { TransactionReceiptModal } from "./TransactionReceiptModal";
 
 export type { ATMScreen };
 import { BottomSection } from "./BottomSection";
@@ -33,6 +34,20 @@ export function ATMContainer() {
   const [showDepositScreen, setShowDepositScreen] = useState(false);
   const [showBuyWithCardScreen, setShowBuyWithCardScreen] = useState(false);
   const [showSendCryptoScreen, setShowSendCryptoScreen] = useState(false);
+  const [showTransactionModal, setShowTransactionModal] = useState(false);
+  const [transactionHash, setTransactionHash] = useState<string>("");
+  const [transactionType, setTransactionType] = useState<"swap" | "send">("swap");
+  const [transactionTokens, setTransactionTokens] = useState<{
+    fromToken: any;
+    toToken: any;
+    fromAmount: string;
+    toAmount: string;
+  }>({
+    fromToken: null,
+    toToken: null,
+    fromAmount: "",
+    toAmount: "",
+  });
   const address = useEvmAddress();
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -212,12 +227,32 @@ export function ATMContainer() {
       case "swap":
         if (showSendCryptoScreen) {
           return renderCardWrapper(
-            <SendCryptoScreen onNavigate={() => setShowSendCryptoScreen(false)} />,
+            <SendCryptoScreen
+              onNavigate={() => setShowSendCryptoScreen(false)}
+              onSendComplete={(txHash, tokenData) => {
+                setTransactionHash(txHash);
+                setTransactionType("send");
+                if (tokenData) {
+                  setTransactionTokens(tokenData);
+                }
+                setShowTransactionModal(true);
+              }}
+            />,
           );
         }
         if (showSwapScreen) {
           return renderCardWrapper(
-            <SwapScreen onNavigate={() => setShowSwapScreen(false)} />,
+            <SwapScreen
+              onNavigate={() => setShowSwapScreen(false)}
+              onSwapComplete={(txHash, tokenData) => {
+                setTransactionHash(txHash);
+                setTransactionType("swap");
+                if (tokenData) {
+                  setTransactionTokens(tokenData);
+                }
+                setShowTransactionModal(true);
+              }}
+            />,
           );
         }
         return renderCardWrapper(
@@ -263,7 +298,7 @@ export function ATMContainer() {
   };
 
   return (
-    <div className="md:min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-[390px] mx-auto">
         <div className="mx-auto relative overflow-hidden flex flex-col">
           <div className="flex flex-col">{renderMainContent()}</div>
@@ -277,6 +312,7 @@ export function ATMContainer() {
               setShowDepositScreen(false);
               setShowBuyWithCardScreen(false);
               setShowSendCryptoScreen(false);
+              setShowTransactionModal(false);
             }}
             isSignedIn={isSignedIn}
           />
@@ -285,6 +321,27 @@ export function ATMContainer() {
           <div className="px-[15px]">
             <BottomSection />
           </div>
+
+          {/* Transaction Receipt Modal */}
+          {showTransactionModal && (
+            <div className="fixed inset-0 z-50">
+              <TransactionReceiptModal
+                isOpen={showTransactionModal}
+                onClose={() => {
+                  setShowTransactionModal(false);
+                  setTransactionHash("");
+                }}
+                fromToken={transactionTokens.fromToken}
+                toToken={transactionTokens.toToken}
+                fromAmount={transactionTokens.fromAmount}
+                toAmount={transactionTokens.toAmount}
+                network="base"
+                transactionHash={transactionHash}
+                isExecuting={!transactionHash}
+                transactionType={transactionType}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

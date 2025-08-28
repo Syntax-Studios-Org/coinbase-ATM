@@ -15,6 +15,7 @@ interface TransactionReceiptModalProps {
   network: SupportedNetwork;
   transactionHash?: string;
   isExecuting?: boolean;
+  transactionType?: "swap" | "send";
 }
 
 export function TransactionReceiptModal({
@@ -27,6 +28,7 @@ export function TransactionReceiptModal({
   network,
   transactionHash,
   isExecuting = false,
+  transactionType = "swap",
 }: TransactionReceiptModalProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [receiptHeight, setReceiptHeight] = useState(0);
@@ -86,7 +88,7 @@ export function TransactionReceiptModal({
       style={{
         width: "342px",
         transform: "translateX(calc(-50%))",
-        bottom: "20px",
+        bottom: "118px",
         backgroundImage: `linear-gradient(0deg, rgba(0,0,0, 0.925), rgba(0,0,0, 0.925)), url('/review-txn-modal-bg.png')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -122,56 +124,64 @@ export function TransactionReceiptModal({
         <div className="flex items-center justify-center mb-6">
           <div className="relative flex items-center">
             {/* From Token */}
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 bg-gray-800">
-              {fromToken?.logoUrl ? (
-                <Image
-                  src={fromToken.logoUrl}
-                  alt={fromToken.symbol}
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs font-bold">
-                  {fromToken?.symbol}
-                </div>
-              )}
-            </div>
+            {fromToken && (
+              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 bg-gray-800">
+                {fromToken?.logoUrl ? (
+                  <Image
+                    src={fromToken.logoUrl}
+                    alt={fromToken.symbol}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-xs font-bold">
+                    {fromToken?.symbol}
+                  </div>
+                )}
+              </div>
+            )}
 
-            {/* To Token */}
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 bg-gray-800">
-              {toToken?.logoUrl ? (
-                <Image
-                  src={toToken.logoUrl}
-                  alt={toToken.symbol}
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-xs font-bold">
-                  {toToken?.symbol}
+            {/* To Token - only show for swap transactions */}
+            {transactionType === "swap" && toToken && (
+              <>
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 bg-gray-800">
+                  {toToken?.logoUrl ? (
+                    <Image
+                      src={toToken.logoUrl}
+                      alt={toToken.symbol}
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-xs font-bold">
+                      {toToken?.symbol}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* Exchange Icon */}
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center">
-              <Image
-                src="/exchange-white.svg"
-                alt="Exchange"
-                width={16}
-                height={16}
-              />
-            </div>
+                {/* Exchange Icon - only for swap */}
+                <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full flex items-center justify-center">
+                  <Image
+                    src="/exchange-white.svg"
+                    alt="Exchange"
+                    width={16}
+                    height={16}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Swap Description */}
+        {/* Transaction Description */}
         <div className="text-center mb-8">
           <p className="text-[#2BC876] font-pixelify text-xl">
-            You're trading {fromAmount} {fromToken?.symbol} to {toAmount}{" "}
-            {toToken?.symbol}
+            {transactionType === "swap" 
+              ? `You're trading ${fromAmount} ${fromToken?.symbol} to ${toAmount} ${toToken?.symbol}`
+              : `You're sending ${fromAmount} ${fromToken?.symbol}`
+            }
           </p>
           <p className="text-white/60 text-sm mt-2">
             Transfer usually takes &lt;30s

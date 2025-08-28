@@ -8,22 +8,27 @@ import { useSwap } from "@/hooks/useSwap";
 import { SUPPORTED_NETWORKS } from "@/constants/tokens";
 import type { SupportedNetwork } from "@/constants/tokens";
 import { getTokenDecimals, getTokenSymbol } from "@/utils/tokens";
-import { ATMScreen } from "./ATMContainer";
-import { SwapInput } from "./SwapInput";
-import { TransactionReceiptModal } from "./TransactionReceiptModal";
 import { TokenSelectorScreen } from "./TokenSelectorScreen";
-import { Button, CTAButton } from "@/components/ui";
+import { ATMButton } from "@/components/ui/ATMButton";
+import { UserHeader } from "./UserHeader";
+import type { Token } from "@/types/swap";
 import Image from "next/image";
+import { useThemeStyles } from "@/hooks/useThemeStyles";
 
 interface SwapScreenProps {
-  onNavigate: (screen: ATMScreen) => void;
+  onNavigate: () => void;
+  onSwapComplete?: (transactionHash: string, tokenData?: {
+    fromToken: any;
+    toToken: any;
+    fromAmount: string;
+    toAmount: string;
+  }) => void;
 }
 
-export function SwapScreen({ onNavigate }: SwapScreenProps) {
+export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
   const evmAddress = useEvmAddress();
-  const [showReceiptModal, setShowReceiptModal] = useState(false);
-  const [transactionHash, setTransactionHash] = useState<string | undefined>();
   const [selectingToToken, setSelectingToToken] = useState(false);
+  const { getVar } = useThemeStyles();
 
   const {
     // State
@@ -111,8 +116,17 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
       });
 
       if (swapQuote) {
-        // Show receipt modal immediately
-        setShowReceiptModal(true);
+        const tokenData = {
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount: priceData ? formatUnits(BigInt(priceData.toAmount), toToken.decimals) : "0"
+        };
+
+        // Show modal immediately when swap starts
+        if (onSwapComplete) {
+          onSwapComplete("", tokenData); // Empty hash to show loading state
+        }
 
         const result = await executeSwap({
           swapQuote,
@@ -120,13 +134,12 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
           network,
         });
 
-        // Set transaction hash if available
-        if (result?.transactionHash) {
-          setTransactionHash(result.transactionHash);
+        // Update modal with actual transaction hash
+        if (result?.transactionHash && onSwapComplete) {
+          onSwapComplete(result.transactionHash, tokenData);
         }
 
-        // Reset only the input amounts, keep tokens selected
-        setFromAmount("");
+        // Don't reset states - let user handle it
       }
     } catch (error) {
       console.error("Swap failed:", error);
@@ -146,212 +159,219 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
     if (isNaN(numericAmount) || numericAmount <= 0) return true;
 
     const decimals = getTokenDecimals(fromToken.address, network);
-    const requiredAmount = parseUnits(
-      numericAmount.toString(),
-      decimals,
-    );
+    const requiredAmount = parseUnits(numericAmount.toString(), decimals);
     return BigInt(fromTokenBalance.balance) >= requiredAmount;
   }, [fromToken, fromTokenBalance, fromAmount, network]);
 
   return (
-    // <div className="flex flex-col w-full max-w-[390px] mx-auto px-[15px] py-10 md:py-[105px] min-h-screen">
     <>
-      {/* Main content card */}
-      <
-        // className="w-full h-[434px] rounded-[20px] overflow-hidden relative p-[1px]"
-        // style={{
-        //   background: "linear-gradient(103.02deg, #1E1E1E 0%, #3D3C3C 101.44%)",
-        // }}
-      >
-        <div
-          className="w-full h-full rounded-[20px] relative"
-          style={{
-            background:
-              "radial-gradient(50% 294.9% at 50% 50%, #09140E 0%, #050A07 100%)",
-            boxShadow: "0px 0px 14px 0px #00000026 inset",
+      {!fromToken || selectingToToken ? (
+        /* Token selection interface */
+        <TokenSelectorScreen
+          onNavigate={onNavigate}
+          onTokenSelect={(token) => {
+            if (selectingToToken) {
+              setToToken(token);
+              setSelectingToToken(false);
+            } else {
+              setFromToken(token);
+            }
           }}
-        >
-          <div className="relative z-10 flex flex-col h-full">
-            {!fromToken || selectingToToken ? (
-              /* Token selection interface */
-              <TokenSelectorScreen
-                onNavigate={onNavigate}
-                onTokenSelect={(token) => {
-                  if (selectingToToken) {
-                    setToToken(token);
-                    setSelectingToToken(false);
-                  } else {
-                    setFromToken(token);
-                  }
+          excludeToken={selectingToToken ? fromToken : null}
+          network={network as SupportedNetwork}
+          text={
+            selectingToToken ? "Select Token to Buy" : "Select Token to Sell"
+          }
+          balances={balances}
+          totalUsdBalance={totalUsdBalance}
+          icon="/swap-page-icon.svg"
+        />
+      ) : (
+        /* Swap interface */
+        <div className="flex flex-col h-full">
+          <UserHeader
+            address={evmAddress}
+            balance={totalUsdBalance}
+            isSignedIn={!!evmAddress}
+          />
+          {/* You're trading section */}
+          <div className="mb-6 mt-2">
+            <p className="text-white/30 text-sm mb-3">You're trading</p>
+            <div className="flex items-center gap-3 w-full justify-between">
+              {/* From token pill */}
+              <button
+                onClick={() => {
+                  setFromToken(null);
+                  setToToken(null);
+                  setSelectingToToken(false);
                 }}
-                excludeToken={selectingToToken ? fromToken : null}
-                network={network as SupportedNetwork}
-                title={selectingToToken ? "Select Token to Buy" : "Select Token to Sell"}
-                balances={balances}
-                totalUsdBalance={totalUsdBalance}
+                className="flex items-center gap-1 px-3 py-2 bg-[#2BC876] rounded-full hover:bg-[#25b369] transition-colors"
+              >
+                <Image
+                  src={fromToken.logoUrl!}
+                  alt={fromToken.name}
+                  width={20}
+                  height={20}
+                  className="rounded-full"
+                />
+                <span className="text-black font-medium text-sm font-pixelify">
+                  {fromToken.symbol}
+                </span>
+              </button>
+
+              {/* Exchange icon */}
+              <Image
+                src="/exchange.svg"
+                alt="Exchange"
+                width={16}
+                height={16}
+                className="cursor-pointer"
+                onClick={handleSwapTokens}
               />
-            ) : (
-              /* Swap interface */
-              <div className="flex flex-col h-full">
-                {/* You're trading section */}
-                <div className="mb-6">
-                  <p className="text-white/30 text-sm mb-3">You're trading</p>
-                  <div className="flex items-center gap-3 w-full justify-between">
-                    {/* From token pill */}
-                    <button
-                      onClick={() => {
-                        setFromToken(null);
-                        setToToken(null);
-                        setSelectingToToken(false);
-                      }}
-                      className="flex items-center gap-1 px-3 py-2 bg-[#2BC876] rounded-full hover:bg-[#25b369] transition-colors"
-                    >
-                      <Image
-                        src={fromToken.logoUrl!}
-                        alt={fromToken.name}
-                        width={20}
-                        height={20}
-                        className="rounded-full"
-                      />
-                      <span className="text-black font-medium text-sm font-pixelify">
-                        {fromToken.symbol}
-                      </span>
-                    </button>
 
-                    {/* Exchange icon */}
-                    <Image
-                      src="/exchange.svg"
-                      alt="Exchange"
-                      width={16}
-                      height={16}
-                      className="cursor-pointer"
-                      onClick={handleSwapTokens}
-                    />
-
-                    {/* To token pill */}
-                    {toToken ? (
-                      <button
-                        onClick={() => setSelectingToToken(true)}
-                        className="flex items-center gap-2 px-3 py-2 border border-[#2BC876] rounded-full hover:bg-[#2BC876]/10 transition-colors"
-                      >
-                        <Image
-                          src={toToken.logoUrl!}
-                          alt={toToken.name}
-                          width={20}
-                          height={20}
-                          className="rounded-full"
-                        />
-                        <span className="text-[#2BC876] font-medium text-sm">
-                          {toToken.symbol}
-                        </span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setSelectingToToken(true)}
-                        className="relative px-3 py-2 rounded-full text-[#2BC876] font-medium text-sm flex items-center gap-1 font-pixelify bg-[#2BC876]/20"
-                      >
-                        <span>Select token</span>
-                        <Image
-                          src="/chevron-down.svg"
-                          width={14}
-                          height={14}
-                          alt="down"
-                        />
-
-                        {/* Border overlay */}
-                        <span
-                          className="absolute inset-0 rounded-full pointer-events-none"
-                          style={{
-                            border: "1px dashed transparent",
-                            borderRadius: "9999px",
-                            background:
-                              "repeating-linear-gradient(90deg, #2BC876 0 12px, transparent 12px 24px)",
-                            WebkitMask:
-                              "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude",
-                            padding: "1px",
-                          }}
-                        />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Amount input */}
-                <div className="flex-1 flex items-center justify-center">
-                  <input
-                    type="text"
-                    value={fromAmount}
-                    onChange={(e) => setFromAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="text-[#2BC876] w-full text-center bg-transparent border-none outline-none text-[56px] leading-[50px] tracking-[2%] font-pixelify font-normal placeholder-[#2BC876]/40"
+              {/* To token pill */}
+              {toToken ? (
+                <button
+                  onClick={() => setSelectingToToken(true)}
+                  className="flex items-center gap-2 px-3 py-2 border border-[#2BC876] rounded-full hover:bg-[#2BC876]/10 transition-colors"
+                >
+                  <Image
+                    src={toToken.logoUrl!}
+                    alt={toToken.name}
+                    width={20}
+                    height={20}
+                    className="rounded-full"
                   />
-                </div>
+                  <span className="text-[#2BC876] font-medium text-sm">
+                    {toToken.symbol}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setSelectingToToken(true)}
+                  className="relative px-3 py-2 rounded-full text-[#2BC876] font-medium text-sm flex items-center gap-1 font-pixelify bg-[#2BC876]/20"
+                >
+                  <span>Select token</span>
+                  <Image
+                    src="/chevron-down.svg"
+                    width={14}
+                    height={14}
+                    alt="down"
+                  />
 
-                {/* Bottom info */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-white/60 uppercase">Slippage</span>
-                    <span className="text-white">1%</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-white/60 uppercase">
-                      Transaction fee
-                    </span>
-                    <span className="text-white">
-                      {priceData?.fees ? (
-                        <>
-                          {priceData.fees.protocolFee && (
-                            <>
-                              {formatUnits(
-                                BigInt(
-                                  priceData.fees.protocolFee.amount || "0",
-                                ),
-                                getTokenDecimals(
-                                  priceData.fees.protocolFee.token,
-                                  network,
-                                ),
-                              )}{" "}
-                              {getTokenSymbol(
-                                priceData.fees.protocolFee.token,
-                                network,
-                              )}
-                            </>
-                          )}
-                        </>
-                      ) : (
-                        "0.00"
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-white/60 uppercase">Network</span>
-                    <span className="text-[#2ac876]">Base</span>
-                  </div>
-                </div>
+                  {/* Border overlay */}
+                  <span
+                    className="absolute inset-0 rounded-full pointer-events-none"
+                    style={{
+                      border: "1px dashed transparent",
+                      borderRadius: "9999px",
+                      background:
+                        "repeating-linear-gradient(90deg, #2BC876 0 12px, transparent 12px 24px)",
+                      WebkitMask:
+                        "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+                      WebkitMaskComposite: "xor",
+                      maskComposite: "exclude",
+                      padding: "1px",
+                    }}
+                  />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Amount input */}
+          <div className="flex-col items-center justify-around my-auto">
+            <div className="flex items-center justify-center">
+              <input
+                type="text"
+                value={fromAmount}
+                onChange={(e) => setFromAmount(e.target.value)}
+                placeholder="0.00"
+                className="text-[#2BC876] w-full text-center bg-transparent border-none outline-none text-[56px] leading-[50px] tracking-[2%] font-pixelify font-normal placeholder-[#2BC876]/40"
+              />
+            </div>
+
+            {/* Available balance with MAX button */}
+            {fromTokenBalance && (
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="text-white/60 text-xs">
+                  Avl: ${fromTokenBalance.usdValue?.toFixed(2) || "0.00"}
+                </span>
+                <span className="text-white/60 text-xs">•</span>
+                <button
+                  onClick={handleMaxClick}
+                  className="text-xs font-pixelify"
+                  style={{ color: getVar("textAccent") }}
+                >
+                  MAX
+                </button>
               </div>
             )}
           </div>
-        </div>
-      </>
 
-      {/* CTA Button */}
-      <CTAButton
-        onClick={() => {
-          if (!fromToken || selectingToToken) {
-            // Token selection is handled by the token list interface
-            return;
-          } else if (!toToken) {
-            // Open to token selector
-            setSelectingToToken(true);
-          } else if (priceData) {
-            // Execute swap
-            handleSwap();
+          {/* Bottom info */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-white/60 uppercase">Slippage</span>
+              <span className="text-white">1%</span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-white/60 uppercase">Transaction fee</span>
+              <span className="text-white">
+                {priceData?.fees ? (
+                  <>
+                    {priceData.fees.protocolFee && (
+                      <>
+                        {formatUnits(
+                          BigInt(priceData.fees.protocolFee.amount || "0"),
+                          getTokenDecimals(
+                            priceData.fees.protocolFee.token,
+                            network,
+                          ),
+                        )}{" "}
+                        {getTokenSymbol(
+                          priceData.fees.protocolFee.token,
+                          network,
+                        )}
+                      </>
+                    )}
+                  </>
+                ) : (
+                  "0.00"
+                )}
+              </span>
+            </div>
+            <div className="flex justify-between text-xs">
+              <span className="text-white/60 uppercase">Network</span>
+              <span className="text-[#2ac876]">Base</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ATM Button */}
+      <div className="mt-4 w-full">
+        <ATMButton
+          onClick={() => {
+            if (!fromToken || selectingToToken) {
+              // Token selection is handled by the token list interface
+              return;
+            } else if (!toToken) {
+              // Open to token selector
+              setSelectingToToken(true);
+            } else if (priceData) {
+              // Execute swap
+              handleSwap();
+            }
+          }}
+          disabled={
+            isPriceLoading ||
+            (fromToken && toToken && !hasSufficientBalance) ||
+            isExecutionLoading
           }
-        }}
-        text={
-          !fromToken
+          isLoading={isExecutionLoading}
+        >
+          {!fromToken
             ? "Select Token"
             : selectingToToken
               ? "Select Token"
@@ -363,64 +383,8 @@ export function SwapScreen({ onNavigate }: SwapScreenProps) {
                     ? "Insufficient Balance"
                     : !isSwapReady
                       ? "Enter Amount"
-                      : "Trade"
-        }
-        disabled={
-          isPriceLoading ||
-          (fromToken && toToken && !hasSufficientBalance) ||
-          false
-        }
-        className="mt-[10px]"
-      />
-
-      {/* Bottom section */}
-      <div className="relative">
-        <div className="flex items-center justify-center mt-[20px] mb-2">
-          <div className="text-white font-medium text-[9px] text-center tracking-[2.75px] leading-[15px] mix-blend-color-dodge opacity-32">
-            COLLECT YOUR CRYPTO
-          </div>
-        </div>
-
-        {/* Bottom card */}
-        <div className="w-full flex flex-col items-center justify-center gap-2.5 p-2 rounded-lg border-[0.7px] border-white/20">
-          <div
-            className="w-full h-[26px] rounded-[3px] p-px relative"
-            style={{
-              background:
-                "linear-gradient(103.02deg, #1E1E1E 0%, #3D3C3C 101.44%)",
-            }}
-          >
-            <div
-              className="w-full h-full rounded-[3px] relative"
-              style={{
-                background:
-                  "linear-gradient(104.62deg, #1A1A1A 0.45%, #090909 100%)",
-                boxShadow: "0px 0px 18px 0px #000000E5 inset",
-              }}
-            >
-              <div className="absolute w-px h-[11px] -top-3 left-1/2 transform -translate-x-1/2 mix-blend-color-dodge bg-white/20"></div>
-            </div>
-          </div>
-        </div>
-
-        <TransactionReceiptModal
-          isOpen={showReceiptModal}
-          onClose={() => {
-            setShowReceiptModal(false);
-            setTransactionHash(undefined);
-          }}
-          fromToken={fromToken}
-          toToken={toToken}
-          fromAmount={fromAmount}
-          toAmount={
-            priceData
-              ? formatUnits(BigInt(priceData.toAmount), toToken?.decimals || 18)
-              : "0"
-          }
-          network={network as SupportedNetwork}
-          transactionHash={transactionHash}
-          isExecuting={isExecutionLoading}
-        />
+                      : "Trade"}
+        </ATMButton>
       </div>
     </>
   );

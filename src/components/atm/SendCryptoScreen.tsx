@@ -14,11 +14,20 @@ import { formatUnits, parseUnits, encodeFunctionData, erc20Abi } from "viem";
 
 interface SendCryptoScreenProps {
   onNavigate: () => void;
+  onSendComplete?: (transactionHash: string, tokenData?: {
+    fromToken: any;
+    toToken: any;
+    fromAmount: string;
+    toAmount: string;
+  }) => void;
 }
 
 type SendStep = "address" | "token" | "amount";
 
-export function SendCryptoScreen({ onNavigate }: SendCryptoScreenProps) {
+export function SendCryptoScreen({
+  onNavigate,
+  onSendComplete,
+}: SendCryptoScreenProps) {
   const [currentStep, setCurrentStep] = useState<SendStep>("address");
   const [recipientAddress, setRecipientAddress] = useState("");
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
@@ -110,10 +119,11 @@ export function SendCryptoScreen({ onNavigate }: SendCryptoScreenProps) {
     setIsSending(true);
     try {
       const amountInWei = parseUnits(amount, selectedToken.decimals);
+      let txnHash = "";
 
       // For ETH transfers
       if (selectedToken.symbol === "ETH") {
-        await sendTransaction({
+        const { transactionHash } = await sendTransaction({
           evmAccount: evmAddress!,
           network: "base" as any,
           transaction: {
@@ -126,6 +136,7 @@ export function SendCryptoScreen({ onNavigate }: SendCryptoScreenProps) {
             type: "eip1559" as const,
           },
         });
+        txnHash = transactionHash;
       } else {
         // For ERC20 token transfers - encode transfer function call
         const transferData = encodeFunctionData({
@@ -134,7 +145,7 @@ export function SendCryptoScreen({ onNavigate }: SendCryptoScreenProps) {
           args: [recipientAddress as `0x${string}`, amountInWei],
         });
 
-        await sendTransaction({
+        const { transactionHash } = await sendTransaction({
           evmAccount: evmAddress!,
           network: "base" as any,
           transaction: {
@@ -148,14 +159,27 @@ export function SendCryptoScreen({ onNavigate }: SendCryptoScreenProps) {
             type: "eip1559" as const,
           },
         });
+        txnHash = transactionHash;
       }
 
-      // Reset form and navigate back
-      setRecipientAddress("");
-      setSelectedToken(null);
-      setAmount("");
-      setCurrentStep("address");
-      onNavigate();
+      const tokenData = {
+        fromToken: selectedToken,
+        toToken: null, // No toToken for send transactions
+        fromAmount: amount,
+        toAmount: ""
+      };
+
+      // Notify parent component about successful send
+      if (onSendComplete) {
+        onSendComplete(txnHash, tokenData);
+      }
+
+      // Don't reset states - let user handle it
+      // setRecipientAddress("");
+      // setSelectedToken(null);
+      // setAmount("");
+      // setCurrentStep("address");
+      // onNavigate();
     } catch (error) {
       console.error("Failed to send transaction:", error);
     } finally {
@@ -285,7 +309,10 @@ export function SendCryptoScreen({ onNavigate }: SendCryptoScreenProps) {
       <div className="w-full mb-4">
         <div
           className="flex items-center gap-3 p-3 rounded-xl border"
-          style={{ backgroundColor: getVar("backgroundTertiary"), borderColor: getVar("borderAccent") }}
+          style={{
+            backgroundColor: getVar("backgroundTertiary"),
+            borderColor: getVar("borderAccent"),
+          }}
         >
           <Image
             src={selectedToken!.logoUrl!}
