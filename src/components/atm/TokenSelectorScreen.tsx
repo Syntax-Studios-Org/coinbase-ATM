@@ -20,6 +20,7 @@ interface TokenSelectorScreenProps {
   balances?: any[];
   totalUsdBalance?: number;
   text?: string;
+  icon?: string
 }
 
 export function TokenSelectorScreen({
@@ -31,6 +32,7 @@ export function TokenSelectorScreen({
   balances = [],
   totalUsdBalance = 0,
   text,
+  icon
 }: TokenSelectorScreenProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { getVar } = useThemeStyles();
@@ -39,9 +41,9 @@ export function TokenSelectorScreen({
   // Get tokens for current network
   const networkTokens = Object.values(SUPPORTED_NETWORKS[network]);
 
-  // Filter tokens based on search query and exclude token
+  // Filter tokens based on search query and exclude token, then sort by USD value
   const filteredTokens = useMemo(() => {
-    return networkTokens.filter((token) => {
+    const filtered = networkTokens.filter((token) => {
       // Filter out excluded token
       const isValidForSelection = excludeToken
         ? token.address !== excludeToken.address
@@ -55,7 +57,22 @@ export function TokenSelectorScreen({
 
       return isValidForSelection && matchesSearch;
     });
-  }, [networkTokens, searchQuery, excludeToken]);
+
+    // Sort by USD value in descending order
+    return filtered.sort((a, b) => {
+      const balanceA = balances?.find(
+        (balance) => balance.token.address.toLowerCase() === a.address.toLowerCase()
+      );
+      const balanceB = balances?.find(
+        (balance) => balance.token.address.toLowerCase() === b.address.toLowerCase()
+      );
+
+      const usdValueA = balanceA?.usdValue || 0;
+      const usdValueB = balanceB?.usdValue || 0;
+
+      return usdValueB - usdValueA; // Descending order
+    });
+  }, [networkTokens, searchQuery, excludeToken, balances]);
 
   return (
     <>
@@ -66,6 +83,11 @@ export function TokenSelectorScreen({
         {/* Title text or balance display */}
         {text ? (
           <div className="w-full text-left">
+            {
+              icon && (
+                <Image src={icon} alt='icon' width={32} height={32} className="mb-2" />
+              )
+            }
             <p
               className="font-pixelify text-2xl"
               style={{
@@ -141,7 +163,7 @@ export function TokenSelectorScreen({
                 : "0";
               const tokenUsdValueFormatted = balance?.usdValue
                 ? `$${balance.usdValue.toFixed(2)}`
-                : "";
+                : "$0";
               return (
                 <button
                   key={token.address}
@@ -152,7 +174,7 @@ export function TokenSelectorScreen({
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = getVar(
-                      "buttonSecondaryHover",
+                      "backgroundTertiary",
                     );
                   }}
                   onMouseLeave={(e) => {

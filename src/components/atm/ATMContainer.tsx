@@ -16,6 +16,7 @@ import {
 } from "./ActionButtons";
 import { DepositTokenScreen } from "./DepositTokenScreen";
 import { BuyWithCardScreen } from "./BuyWithCardScreen";
+import { SendCryptoScreen } from "./SendCryptoScreen";
 
 export type { ATMScreen };
 import { BottomSection } from "./BottomSection";
@@ -31,6 +32,7 @@ export function ATMContainer() {
   const [showSwapScreen, setShowSwapScreen] = useState(false);
   const [showDepositScreen, setShowDepositScreen] = useState(false);
   const [showBuyWithCardScreen, setShowBuyWithCardScreen] = useState(false);
+  const [showSendCryptoScreen, setShowSendCryptoScreen] = useState(false);
   const address = useEvmAddress();
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -58,7 +60,7 @@ export function ATMContainer() {
   };
 
   const handleSendCrypto = () => {
-    console.log("Navigate to send crypto");
+    setShowSendCryptoScreen(true);
   };
 
   const handleTokenSelect = (token: any) => {
@@ -208,6 +210,11 @@ export function ATMContainer() {
         );
 
       case "swap":
+        if (showSendCryptoScreen) {
+          return renderCardWrapper(
+            <SendCryptoScreen onNavigate={() => setShowSendCryptoScreen(false)} />,
+          );
+        }
         if (showSwapScreen) {
           return renderCardWrapper(
             <SwapScreen onNavigate={() => setShowSwapScreen(false)} />,
@@ -269,6 +276,7 @@ export function ATMContainer() {
               setShowSwapScreen(false);
               setShowDepositScreen(false);
               setShowBuyWithCardScreen(false);
+              setShowSendCryptoScreen(false);
             }}
             isSignedIn={isSignedIn}
           />
