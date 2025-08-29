@@ -13,11 +13,13 @@ import { DepositTokenScreen } from "./DepositTokenScreen";
 import { BuyWithCardScreen } from "./BuyWithCardScreen";
 import { SendCryptoScreen } from "./SendCryptoScreen";
 import { TransactionReceiptModal } from "./TransactionReceiptModal";
+import { TutorialOverlay } from "./TutorialOverlay";
 import { BottomSection } from "./BottomSection";
 import { UserHeader } from "./UserHeader";
 
 import { useThemeStyles } from "@/hooks/useThemeStyles";
 import { useTokenBalances } from "@/hooks/useTokenBalances";
+import { useTutorial } from "@/hooks/useTutorial";
 import { SUPPORTED_NETWORKS } from "@/constants/tokens";
 
 export type { ATMScreen };
@@ -48,6 +50,7 @@ export function ATMContainer() {
   const [otp, setOtp] = useState("");
   const isSignedIn = useIsSignedIn();
   const { theme, getVar } = useThemeStyles();
+  const { showTutorial, isLoading: tutorialLoading, completeTutorial } = useTutorial();
 
   const allTokens = useMemo(
     () => Object.values(SUPPORTED_NETWORKS).flatMap((network) => Object.values(network)),
@@ -298,6 +301,12 @@ export function ATMContainer() {
             <BottomSection />
           </div>
 
+          {/* Tutorial Overlay */}
+          <TutorialOverlay
+            isOpen={showTutorial && !tutorialLoading}
+            onClose={completeTutorial}
+          />
+
           {/* Transaction Receipt Modal */}
           {showTransactionModal && (
             <div className="fixed inset-0 z-50">
@@ -317,6 +326,14 @@ export function ATMContainer() {
                 transactionType={transactionType}
               />
             </div>
+          )}
+
+          {/* Tutorial Overlay */}
+          {!tutorialLoading && (
+            <TutorialOverlay
+              isOpen={showTutorial}
+              onClose={completeTutorial}
+            />
           )}
         </div>
       </div>
