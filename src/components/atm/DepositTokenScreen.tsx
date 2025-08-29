@@ -47,6 +47,8 @@ export function DepositTokenScreen({ onNavigate }: DepositTokenScreenProps) {
         address={evmAddress}
         balance={totalBalance}
         isSignedIn={!!evmAddress}
+        showGoBack={true}
+        onGoBack={onNavigate}
       />
 
       {/* Main content */}

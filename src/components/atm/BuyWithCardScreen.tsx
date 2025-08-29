@@ -85,6 +85,7 @@ export function BuyWithCardScreen({ onNavigate }: BuyWithCardScreenProps) {
         balances={balances}
         totalUsdBalance={totalBalance}
         text="Select a token to buy with card..."
+        onGoBack={onNavigate}
       />
     );
   }
@@ -97,6 +98,8 @@ export function BuyWithCardScreen({ onNavigate }: BuyWithCardScreenProps) {
         address={evmAddress}
         balance={totalBalance}
         isSignedIn={!!evmAddress}
+        showGoBack={true}
+        onGoBack={onNavigate}
       />
 
       {/* Main content */}

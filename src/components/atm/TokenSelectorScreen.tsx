@@ -18,9 +18,10 @@ interface TokenSelectorScreenProps {
   network?: SupportedNetwork;
   title?: string;
   balances?: any[];
-  totalUsdBalance?: number;
+  totalUsdBalance: number;
   text?: string;
-  icon?: string
+  icon?: string;
+  onGoBack?: () => void;
 }
 
 export function TokenSelectorScreen({
@@ -32,7 +33,8 @@ export function TokenSelectorScreen({
   balances = [],
   totalUsdBalance = 0,
   text,
-  icon
+  icon,
+  onGoBack
 }: TokenSelectorScreenProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { getVar } = useThemeStyles();
@@ -76,7 +78,13 @@ export function TokenSelectorScreen({
 
   return (
     <>
-      <UserHeader address={address} balance={totalUsdBalance} isSignedIn={true} />
+      <UserHeader 
+        address={address} 
+        balance={totalUsdBalance} 
+        isSignedIn={true}
+        showGoBack={!!onGoBack}
+        onGoBack={onGoBack}
+      />
     <div className="flex flex-col h-full min-w-full py-4">
       {/* Token selection interface */}
       <div className="flex flex-col items-center gap-4 w-full flex-1">

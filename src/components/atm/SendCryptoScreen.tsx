@@ -199,6 +199,8 @@ export function SendCryptoScreen({
           address={evmAddress}
           balance={totalUsdBalance}
           isSignedIn={!!evmAddress}
+          showGoBack={true}
+          onGoBack={onNavigate}
         />
 
         {/* Header with Send text and thumb icon */}
@@ -253,6 +255,7 @@ export function SendCryptoScreen({
         totalUsdBalance={totalUsdBalance}
         text="Select a token to send."
         icon="/swap-page-icon.svg"
+        onGoBack={() => setCurrentStep("address")}
       />
     );
   }
@@ -264,6 +267,8 @@ export function SendCryptoScreen({
         address={evmAddress}
         balance={totalUsdBalance}
         isSignedIn={!!evmAddress}
+        showGoBack={true}
+        onGoBack={() => setCurrentStep("address")}
       />
 
       {/* Header with sending to address */}

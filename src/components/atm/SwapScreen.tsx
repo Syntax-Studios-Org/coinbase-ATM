@@ -28,6 +28,7 @@ interface SwapScreenProps {
 export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
   const evmAddress = useEvmAddress();
   const [selectingToToken, setSelectingToToken] = useState(false);
+  const [slippage, setSlippage] = useState(5); // 5% default slippage
   const { getVar } = useThemeStyles();
 
   const {
@@ -112,7 +113,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
         fromAmount: parseUnits(fromAmount, fromToken.decimals),
         network,
         taker: evmAddress,
-        slippageBps: 100, // 1% slippage
+        slippageBps: slippage * 100 || 100
       });
 
       if (swapQuote) {
@@ -185,6 +186,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
           balances={balances}
           totalUsdBalance={totalUsdBalance}
           icon="/swap-page-icon.svg"
+          onGoBack={() => setSelectingToToken(false)}
         />
       ) : (
         /* Swap interface */
@@ -193,6 +195,9 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
             address={evmAddress}
             balance={totalUsdBalance}
             isSignedIn={!!evmAddress}
+            showSettings={true}
+            slippage={slippage}
+            onSlippageChange={setSlippage}
           />
           {/* You're trading section */}
           <div className="mb-6 mt-2">
@@ -313,7 +318,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
           <div className="space-y-2">
             <div className="flex justify-between text-xs">
               <span className="text-white/60 uppercase">Slippage</span>
-              <span className="text-white">1%</span>
+              <span className="text-white">{slippage}%</span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-white/60 uppercase">Transaction fee</span>

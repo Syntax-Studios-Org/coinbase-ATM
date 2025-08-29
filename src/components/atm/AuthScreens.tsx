@@ -88,7 +88,7 @@ export function AuthScreens({
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              boxShadow: "2px #00000026 inset",
+              boxShadow: "inset 0px 0px 24px 4px rgba(0,0,0,0.6)",
             }}
           >
             {/* Welcome Text */}
@@ -131,7 +131,7 @@ export function AuthScreens({
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              boxShadow: "0px 0px 14px 0px #00000026 inset",
+              boxShadow: "inset 0px 0px 24px 4px rgba(0,0,0,0.6)",
             }}
           >
             {/* Header */}
@@ -190,7 +190,7 @@ export function AuthScreens({
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
-              boxShadow: "0px 0px 14px 0px #00000026 inset",
+              boxShadow: "inset 0px 0px 24px 4px rgba(0,0,0,0.6)",
             }}
           >
             {/* Header */}
