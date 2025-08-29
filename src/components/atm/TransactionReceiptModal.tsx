@@ -102,7 +102,6 @@ export function TransactionReceiptModal({
     >
       {/* Content */}
       <div className="p-6 text-white h-[550px] flex flex-col relative">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <p className="text-sm text-white/50">Review transaction</p>
           <button
@@ -119,11 +118,8 @@ export function TransactionReceiptModal({
             </svg>
           </button>
         </div>
-
-        {/* Token Exchange Visual */}
         <div className="flex items-center justify-center mb-6">
           <div className="relative flex items-center">
-            {/* From Token */}
             {fromToken && (
               <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20 bg-gray-800">
                 {fromToken?.logoUrl ? (

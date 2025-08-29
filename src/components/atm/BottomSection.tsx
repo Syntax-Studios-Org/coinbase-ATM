@@ -7,7 +7,6 @@ export function BottomSection() {
 
   return (
     <>
-      {/* Bottom section */}
       <div className="flex items-center justify-center mt-[20px] mb-2">
         <div 
           className="font-medium text-[9px] text-center tracking-[2.75px] leading-[15px] mix-blend-color-dodge opacity-32"
@@ -17,7 +16,6 @@ export function BottomSection() {
         </div>
       </div>
 
-      {/* Bottom card */}
       <div 
         className="w-full flex flex-col items-center justify-center gap-2.5 p-2 rounded-lg border-[0.7px]"
         style={{ borderColor: getVar('borderPrimary') }}
@@ -36,7 +34,7 @@ export function BottomSection() {
             <div 
               className="absolute w-px h-[11px] -top-3 left-1/2 transform -translate-x-1/2 mix-blend-color-dodge"
               style={{ backgroundColor: getVar('borderPrimary') }}
-            ></div>
+            />
           </div>
         </div>
       </div>

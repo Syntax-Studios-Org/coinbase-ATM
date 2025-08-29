@@ -11,7 +11,6 @@ import { getTokenDecimals, getTokenSymbol } from "@/utils/tokens";
 import { TokenSelectorScreen } from "./TokenSelectorScreen";
 import { ATMButton } from "@/components/ui/ATMButton";
 import { UserHeader } from "./UserHeader";
-import type { Token } from "@/types/swap";
 import Image from "next/image";
 import { useThemeStyles } from "@/hooks/useThemeStyles";
 
@@ -32,7 +31,6 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
   const { getVar } = useThemeStyles();
 
   const {
-    // State
     fromToken,
     toToken,
     fromAmount,
@@ -40,25 +38,12 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
     setFromToken,
     setToToken,
     setFromAmount,
-    setNetwork,
-
-    // Price data
     priceData,
     isPriceLoading,
     priceError,
-
-    // Quote creation
     createQuote,
-    isQuoteLoading,
-    quoteError,
-
-    // Execution
     executeSwap,
     isExecutionLoading,
-    executionError,
-
-    // Utils
-    resetSwap,
   } = useSwap();
 
   // Get tokens for current network
@@ -124,9 +109,8 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
           toAmount: priceData ? formatUnits(BigInt(priceData.toAmount), toToken.decimals) : "0"
         };
 
-        // Show modal immediately when swap starts
         if (onSwapComplete) {
-          onSwapComplete("", tokenData); // Empty hash to show loading state
+          onSwapComplete("", tokenData);
         }
 
         const result = await executeSwap({
@@ -135,12 +119,9 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
           network,
         });
 
-        // Update modal with actual transaction hash
         if (result?.transactionHash && onSwapComplete) {
           onSwapComplete(result.transactionHash, tokenData);
         }
-
-        // Don't reset states - let user handle it
       }
     } catch (error) {
       console.error("Swap failed:", error);
@@ -193,17 +174,14 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
         <div className="flex flex-col h-full">
           <UserHeader
             address={evmAddress}
-            balance={totalUsdBalance}
             isSignedIn={!!evmAddress}
             showSettings={true}
             slippage={slippage}
             onSlippageChange={setSlippage}
           />
-          {/* You're trading section */}
           <div className="mb-6 mt-2">
             <p className="text-white/30 text-sm mb-3">You're trading</p>
             <div className="flex items-center gap-3 w-full justify-between">
-              {/* From token pill */}
               <button
                 onClick={() => {
                   setFromToken(null);

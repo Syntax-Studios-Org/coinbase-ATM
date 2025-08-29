@@ -13,7 +13,6 @@ export function SimpleHomeScreen({ onBuyCrypto, onSendCrypto }: SimpleHomeScreen
 
   return (
     <>
-      {/* Welcome message and icon */}
       <div className="h-[434px] flex flex-col items-center gap-4">
         <div className="w-8 h-8">
           <DollarSign className="w-8 h-8" style={{ color: getVar('textAccent') }} />
@@ -30,10 +29,7 @@ export function SimpleHomeScreen({ onBuyCrypto, onSendCrypto }: SimpleHomeScreen
           Choose an action to continue...
         </p>
       </div>
-
-      {/* Action buttons */}
       <div className="flex items-start justify-center gap-3 w-full">
-        {/* Send Crypto Button */}
         <button
           onClick={onSendCrypto}
           className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] border border-solid transition-all"
@@ -61,7 +57,6 @@ export function SimpleHomeScreen({ onBuyCrypto, onSendCrypto }: SimpleHomeScreen
           </div>
         </button>
 
-        {/* Buy Crypto Button */}
         <button
           onClick={onBuyCrypto}
           className="cursor-pointer flex flex-col items-start gap-3 p-3 flex-1 rounded-[10px] overflow-hidden transition-colors"

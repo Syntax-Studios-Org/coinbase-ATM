@@ -16,7 +16,6 @@ import { LogOut } from "lucide-react";
 
 interface UserHeaderProps {
   address: string | null;
-  balance: number;
   isSignedIn: boolean;
   showGoBack?: boolean;
   onGoBack?: () => void;
@@ -27,7 +26,6 @@ interface UserHeaderProps {
 
 export function UserHeader({
   address,
-  balance,
   isSignedIn,
   showGoBack = false,
   onGoBack,

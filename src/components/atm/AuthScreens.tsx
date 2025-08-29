@@ -50,7 +50,7 @@ export function AuthScreens({
   const handleVerifyEmail = async () => {
     setIsLoading(true);
     try {
-      const { flowId, message } = await signIn({ email });
+      const { flowId } = await signIn({ email });
       setFlowId(flowId);
       setAuthScreen("otp");
     } catch (error) {
@@ -91,19 +91,14 @@ export function AuthScreens({
               boxShadow: "inset 0px 0px 24px 4px rgba(0,0,0,0.6)",
             }}
           >
-            {/* Welcome Text */}
             <div className="flex-1 flex items-center justify-center">
               <h1
                 className="font-pixelify font-semibold text-3xl text-center"
-                style={{
-                  color: getVar("success"),
-                }}
+                style={{ color: getVar("success") }}
               >
                 Welcome to the ATM
               </h1>
             </div>
-
-            {/* Bottom Button */}
             <div className="w-full px-6 pb-8">
               <ATMButton
                 onClick={() => setAuthScreen("email")}
@@ -134,19 +129,14 @@ export function AuthScreens({
               boxShadow: "inset 0px 0px 24px 4px rgba(0,0,0,0.6)",
             }}
           >
-            {/* Header */}
             <div className="pt-8 px-6">
               <h2
                 className="font-pixelify font-semibold text-xl text-left"
-                style={{
-                  color: getVar("success"),
-                }}
+                style={{ color: getVar("success") }}
               >
                 Welcome!{"\n"}Enter your email to log in...
               </h2>
             </div>
-
-            {/* Center Email Input */}
             <div className="flex-1 flex items-center justify-center px-6">
               <input
                 type="email"

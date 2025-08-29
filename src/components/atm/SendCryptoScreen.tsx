@@ -169,17 +169,10 @@ export function SendCryptoScreen({
         toAmount: ""
       };
 
-      // Notify parent component about successful send
       if (onSendComplete) {
         onSendComplete(txnHash, tokenData);
       }
 
-      // Don't reset states - let user handle it
-      // setRecipientAddress("");
-      // setSelectedToken(null);
-      // setAmount("");
-      // setCurrentStep("address");
-      // onNavigate();
     } catch (error) {
       console.error("Failed to send transaction:", error);
     } finally {
@@ -197,13 +190,11 @@ export function SendCryptoScreen({
       <div className="flex flex-col items-center h-full w-full gap-3">
         <UserHeader
           address={evmAddress}
-          balance={totalUsdBalance}
           isSignedIn={!!evmAddress}
           showGoBack={true}
           onGoBack={onNavigate}
         />
 
-        {/* Header with Send text and thumb icon */}
         <div className="flex items-center justify-between w-full mb-6">
           <p
             className="font-pixelify text-2xl"
@@ -213,8 +204,6 @@ export function SendCryptoScreen({
           </p>
           <Image src="/thumb.svg" alt="Thumb" width={24} height={24} />
         </div>
-
-        {/* Center content */}
         <div className="flex-1 pt-10">
           <div className="flex flex-col items-center w-full">
             <p className="text-sm" style={{ color: getVar("textMuted") }}>
@@ -265,7 +254,6 @@ export function SendCryptoScreen({
     <div className="flex flex-col items-center h-full w-full gap-3">
       <UserHeader
         address={evmAddress}
-        balance={totalUsdBalance}
         isSignedIn={!!evmAddress}
         showGoBack={true}
         onGoBack={() => setCurrentStep("address")}

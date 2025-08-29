@@ -41,7 +41,7 @@ export function ConnectWalletModal({ isOpen, onClose }: ConnectWalletModalProps)
 
     setIsLoading(true);
     try {
-      await verifyOTP({ flowId: flowId!, otp }); // Using email as flowId for now
+      await verifyOTP({ flowId: flowId!, otp });
       onClose();
       setStep("email");
       setEmail("");

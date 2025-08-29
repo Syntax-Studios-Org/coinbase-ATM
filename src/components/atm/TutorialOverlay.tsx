@@ -61,7 +61,6 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
       {/* Content container - constrained to 390px width */}
       <div className="w-full max-w-[390px] mx-auto px-[15px] h-full relative flex flex-col">
 
-        {/* Skip Tutorial button - top right */}
         {currentStep < 4 && (
           <div className="absolute top-8 right-4 z-10">
             <button
@@ -79,11 +78,7 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
           </div>
         )}
 
-        {/* Main content area */}
         <div className="flex-1 flex flex-col justify-end py-16">
-
-
-          {/* Bottom section with panda and speech bubble */}
           <div className="relative h-[280px]">
             {/* Panda character - bottom left, much bigger */}
             <div className="absolute bottom-0 left-0">

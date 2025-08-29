@@ -58,7 +58,7 @@ export function ActionButtons({
           {button.icon}
         </div>
         <div
-          className="font-pixelify font-semibold text-base tracking-[0] leading-[19.2px]"
+          className="font-pixelify font-semibold text-base leading-[19.2px]"
           style={{ color: isPrimary ? '#09172d' : getVar('textAccent') }}
         >
           {button.label}
@@ -75,5 +75,4 @@ export function ActionButtons({
   );
 }
 
-// Export icon components for easy use
 export { CreditCard, DownloadCloud, Send, ArrowLeftRight };

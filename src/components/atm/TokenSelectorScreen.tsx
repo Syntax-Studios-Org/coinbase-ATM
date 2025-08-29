@@ -78,9 +78,8 @@ export function TokenSelectorScreen({
 
   return (
     <>
-      <UserHeader 
-        address={address} 
-        balance={totalUsdBalance} 
+      <UserHeader
+        address={address}
         isSignedIn={true}
         showGoBack={!!onGoBack}
         onGoBack={onGoBack}

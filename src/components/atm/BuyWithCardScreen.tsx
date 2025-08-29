@@ -25,28 +25,23 @@ export function BuyWithCardScreen({ onNavigate }: BuyWithCardScreenProps) {
   const { getVar } = useThemeStyles();
   const { generateOnrampUrl, state } = useOnramp();
 
-  // Get all tokens from all networks for balance calculation
   const allTokens = useMemo(
-    () =>
-      Object.values(SUPPORTED_NETWORKS).flatMap((network) =>
-        Object.values(network),
-      ),
+    () => Object.values(SUPPORTED_NETWORKS).flatMap((network) => Object.values(network)),
     [],
   );
+
   const { data: balances } = useTokenBalances("base", allTokens);
 
-  // Calculate total balance in USD
-  const totalBalance =
-    balances?.reduce((total, balance) => {
-      return total + (balance.usdValue || 0);
-    }, 0) || 0;
+  const totalBalance = useMemo(
+    () => balances?.reduce((total, balance) => total + (balance.usdValue || 0), 0) || 0,
+    [balances]
+  );
 
   const handleTokenSelect = (token: Token) => {
     setSelectedToken(token);
   };
 
   const handleAmountChange = (value: string) => {
-    // Only allow numbers and decimal point
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setAmount(value);
     }
@@ -76,7 +71,6 @@ export function BuyWithCardScreen({ onNavigate }: BuyWithCardScreenProps) {
     }
   };
 
-  // Show token selector first
   if (!selectedToken) {
     return (
       <TokenSelectorScreen
@@ -90,13 +84,11 @@ export function BuyWithCardScreen({ onNavigate }: BuyWithCardScreenProps) {
     );
   }
 
-  // Show buy screen after token selection
   return (
     <div className="flex flex-col items-center h-full w-full gap-3">
       {/* User header */}
       <UserHeader
         address={evmAddress}
-        balance={totalBalance}
         isSignedIn={!!evmAddress}
         showGoBack={true}
         onGoBack={onNavigate}
