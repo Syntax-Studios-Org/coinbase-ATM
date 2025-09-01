@@ -36,6 +36,7 @@ export function UserHeader({
   const { getVar } = useThemeStyles();
   const signOut = useSignOut();
   const [customSlippage, setCustomSlippage] = useState(slippage.toString());
+  const [addressCopied, setAddressCopied] = useState(false);
 
   if (!isSignedIn || !address) {
     return (
@@ -58,10 +59,16 @@ export function UserHeader({
     );
   }
 
-  const handleCopyAddress = async () => {
+  const handleCopyAddress = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (address) {
       await navigator.clipboard.writeText(address);
     }
+    setAddressCopied(true);
+    setTimeout(() => {
+      setAddressCopied(false);
+    }, 2000);
   };
 
   const handleSlippageChange = (value: string) => {
@@ -72,7 +79,9 @@ export function UserHeader({
     }
   };
 
-  const setAutoSlippage = () => {
+  const setAutoSlippage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     setCustomSlippage("5");
     onSlippageChange?.(5);
   };
@@ -133,7 +142,21 @@ export function UserHeader({
               onClick={handleCopyAddress}
               className="p-1 hover:opacity-80 transition-opacity"
             >
-              <Image width={14} height={14} alt="copy-icon" src={"/copy.svg"} />
+              {addressCopied ? (
+                <Image
+                  width={14}
+                  height={14}
+                  alt="copied-icon"
+                  src={"/check-tick-double.svg"}
+                />
+              ) : (
+                <Image
+                  width={14}
+                  height={14}
+                  alt="copy-icon"
+                  src={"/copy.svg"}
+                />
+              )}
             </button>
           </div>
         </div>
@@ -149,10 +172,7 @@ export function UserHeader({
           }}
         >
           <div className="flex items-center justify-center gap-2">
-            <LogOut
-              className="h-4 w-4"
-              color={getVar("textColorDisconnect")}
-            />
+            <LogOut className="h-4 w-4" color={getVar("textColorDisconnect")} />
             <span>Disconnect</span>
           </div>
         </DropdownMenuItem>
@@ -181,7 +201,12 @@ export function UserHeader({
           border: `1px solid ${getVar("borderPrimary")}`,
         }}
       >
-        <div className="space-y-3">
+        <div
+          className="space-y-3"
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <div
             className="text-sm font-medium"
             style={{ color: getVar("textPrimary") }}
@@ -193,20 +218,16 @@ export function UserHeader({
             style={{
               width: "215px",
             }}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
           >
             <input
               type="number"
               value={customSlippage}
               onChange={(e) => handleSlippageChange(e.target.value)}
-              onKeyDown={(e) => {
-                e.stopPropagation();
-              }}
-              onFocus={(e) => {
-                e.stopPropagation();
-              }}
+              onKeyDown={(e) => e.stopPropagation()}
+              onFocus={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
               className="flex-1 bg-transparent border-none outline-none text-sm"
               style={{ color: getVar("textPrimary") }}
               placeholder="5"
@@ -214,12 +235,7 @@ export function UserHeader({
               step="0.5"
             />
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setAutoSlippage();
-              }}
-              onPointerDown={(e) => e.stopPropagation()}
-              onMouseDown={(e) => e.stopPropagation()}
+              onClick={setAutoSlippage}
               className="flex items-center justify-center text-xs font-medium cursor-pointer"
               style={{
                 width: "38px",
