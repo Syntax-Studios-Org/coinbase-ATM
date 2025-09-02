@@ -188,7 +188,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
                   setToToken(null);
                   setSelectingToToken(false);
                 }}
-                className="flex items-center gap-1 px-3 py-2 bg-[#2BC876] rounded-full hover:bg-[#25b369] transition-colors"
+                className="flex items-center gap-1 px-3 py-2 bg-[#2BC876] rounded-full hover:bg-[#25b369] transition-colors cursor-pointer"
               >
                 <Image
                   src={fromToken.logoUrl!}
@@ -216,7 +216,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
               {toToken ? (
                 <button
                   onClick={() => setSelectingToToken(true)}
-                  className="flex items-center gap-2 px-3 py-2 border border-[#2BC876] rounded-full hover:bg-[#2BC876]/10 transition-colors"
+                  className="flex items-center gap-2 px-3 py-2 border border-[#2BC876] rounded-full hover:bg-[#2BC876]/10 transition-colors cursor-pointer"
                 >
                   <Image
                     src={toToken.logoUrl!}
@@ -232,7 +232,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
               ) : (
                 <button
                   onClick={() => setSelectingToToken(true)}
-                  className="relative px-3 py-2 rounded-full text-[#2BC876] font-medium text-sm flex items-center gap-1 font-pixelify bg-[#2BC876]/20"
+                  className="relative px-3 py-2 rounded-full text-[#2BC876] font-medium text-sm flex items-center gap-1 font-pixelify bg-[#2BC876]/20 cursor-pointer"
                 >
                   <span>Select token</span>
                   <Image
@@ -283,7 +283,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
                 <span className="text-white/60 text-xs">•</span>
                 <button
                   onClick={handleMaxClick}
-                  className="text-xs font-pixelify"
+                  className="text-xs font-pixelify cursor-pointer"
                   style={{ color: getVar("textAccent") }}
                 >
                   MAX

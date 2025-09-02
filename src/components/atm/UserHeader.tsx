@@ -91,7 +91,7 @@ export function UserHeader({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className="flex items-center gap-1.5 px-0.5 py-0.5 rounded hover:opacity-80 transition-opacity"
+          className="flex cursor-pointer items-center gap-1.5 px-0.5 py-0.5 rounded hover:opacity-80 transition-opacity"
           style={{
             height: "20px",
             borderRadius: "4px",
@@ -140,7 +140,7 @@ export function UserHeader({
             </span>
             <button
               onClick={handleCopyAddress}
-              className="p-1 hover:opacity-80 transition-opacity"
+              className="p-1 hover:opacity-80 transition-opacity cursor-pointer"
             >
               {addressCopied ? (
                 <Image
@@ -184,7 +184,7 @@ export function UserHeader({
   const SettingsDropdown = () => (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <button className="p-1 hover:opacity-80 transition-opacity">
+        <button className="p-1 hover:opacity-80 transition-opacity cursor-pointer">
           <Image
             src="/settings-gear.svg"
             alt="Settings"
@@ -262,7 +262,7 @@ export function UserHeader({
           {showGoBack && onGoBack ? (
             <button
               onClick={onGoBack}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
             >
               <Image
                 src="/back-arrow.svg"

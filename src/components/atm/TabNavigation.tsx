@@ -19,7 +19,7 @@ export function TabNavigation({ currentTab, onTabChange, isSignedIn }: TabNaviga
     return (
       <button
         onClick={() => onTabChange(tab)}
-        className={`flex-1 h-[73px] rounded-2xl border-2 border-black relative transition-all ${
+        className={`flex-1 cursor-pointer h-[73px] rounded-2xl border-2 border-black relative transition-all ${
           !isSignedIn ? 'opacity-50' : ''
         }`}
         disabled={!isSignedIn}

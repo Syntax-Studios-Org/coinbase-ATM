@@ -2,11 +2,15 @@
 
 import { useThemeStyles } from "@/hooks/useThemeStyles";
 
-export function BottomSection() {
+interface BottomSectionProps {
+  children?: React.ReactNode;
+}
+
+export function BottomSection({ children }: BottomSectionProps = {}) {
   const { getVar, theme } = useThemeStyles();
 
   return (
-    <>
+    <div className="relative">
       <div className="flex items-center justify-center mt-[20px] mb-2">
         <div 
           className="font-medium text-[9px] text-center tracking-[2.75px] leading-[15px] mix-blend-color-dodge opacity-32"
@@ -38,6 +42,9 @@ export function BottomSection() {
           </div>
         </div>
       </div>
-    </>
+      
+      {/* Receipt modal will be positioned relative to this container */}
+      {children}
+    </div>
   );
 }

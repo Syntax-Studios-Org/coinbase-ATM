@@ -84,11 +84,10 @@ export function TransactionReceiptModal({
 
   return (
     <div
-      className={`absolute left-1/2 overflow-hidden z-50`}
+      className={`absolute left-1/2 overflow-hidden z-50 bottom-0`}
       style={{
         width: "342px",
-        transform: "translateX(calc(-50%))",
-        bottom: "118px",
+        transform: "translateX(-50%) translateY(-10px)",
         backgroundImage: `linear-gradient(0deg, rgba(0,0,0, 0.925), rgba(0,0,0, 0.925)), url('/review-txn-modal-bg.png')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -174,7 +173,7 @@ export function TransactionReceiptModal({
         {/* Transaction Description */}
         <div className="text-center mb-8">
           <p className="text-[#2BC876] font-pixelify text-xl">
-            {transactionType === "swap" 
+            {transactionType === "swap"
               ? `You're trading ${fromAmount} ${fromToken?.symbol} to ${toAmount} ${toToken?.symbol}`
               : `You're sending ${fromAmount} ${fromToken?.symbol}`
             }

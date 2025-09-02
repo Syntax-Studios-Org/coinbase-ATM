@@ -298,7 +298,26 @@ export function ATMContainer() {
 
           {/* Bottom section */}
           <div className="px-[15px]">
-            <BottomSection />
+            <BottomSection>
+              {/* Transaction Receipt Modal */}
+              {showTransactionModal && (
+                <TransactionReceiptModal
+                  isOpen={showTransactionModal}
+                  onClose={() => {
+                    setShowTransactionModal(false);
+                    setTransactionHash("");
+                  }}
+                  fromToken={transactionTokens.fromToken}
+                  toToken={transactionTokens.toToken}
+                  fromAmount={transactionTokens.fromAmount}
+                  toAmount={transactionTokens.toAmount}
+                  network="base"
+                  transactionHash={transactionHash}
+                  isExecuting={!transactionHash}
+                  transactionType={transactionType}
+                />
+              )}
+            </BottomSection>
           </div>
 
           {/* Tutorial Overlay */}
@@ -306,27 +325,6 @@ export function ATMContainer() {
             isOpen={showTutorial && !tutorialLoading}
             onClose={completeTutorial}
           />
-
-          {/* Transaction Receipt Modal */}
-          {showTransactionModal && (
-            <div className="fixed inset-0 z-50">
-              <TransactionReceiptModal
-                isOpen={showTransactionModal}
-                onClose={() => {
-                  setShowTransactionModal(false);
-                  setTransactionHash("");
-                }}
-                fromToken={transactionTokens.fromToken}
-                toToken={transactionTokens.toToken}
-                fromAmount={transactionTokens.fromAmount}
-                toAmount={transactionTokens.toAmount}
-                network="base"
-                transactionHash={transactionHash}
-                isExecuting={!transactionHash}
-                transactionType={transactionType}
-              />
-            </div>
-          )}
 
           {/* Tutorial Overlay */}
           {!tutorialLoading && (
