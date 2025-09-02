@@ -21,6 +21,7 @@ import { useThemeStyles } from "@/hooks/useThemeStyles";
 import { useTokenBalances } from "@/hooks/useTokenBalances";
 import { useTutorial } from "@/hooks/useTutorial";
 import { SUPPORTED_NETWORKS } from "@/constants/tokens";
+import { WalletLoadingScreen } from "./WalletLoadingScreen";
 
 export type { ATMScreen };
 
@@ -57,7 +58,7 @@ export function ATMContainer() {
     [],
   );
 
-  const { data: balances, totalUsdBalance } = useTokenBalances("base", allTokens);
+  const { data: balances, totalUsdBalance, isLoading: balancesLoading } = useTokenBalances("base", allTokens);
 
   const handleBuyCrypto = () => {
     setShowBuyWithCardScreen(true);
@@ -122,6 +123,7 @@ export function ATMContainer() {
       </>
     );
   };
+
 
   const renderCardWrapper = (children: React.ReactNode) => (
     <div className="flex flex-col w-full px-[15px] py-4 h-full">
@@ -262,6 +264,9 @@ export function ATMContainer() {
         );
 
       case "wallet":
+        if (balancesLoading) {
+          return renderCardWrapper(<WalletLoadingScreen />);
+        }
         return renderCardWrapper(
           <TokenSelectorScreen
             onNavigate={() => {}}
