@@ -13,15 +13,19 @@ import { ATMButton } from "@/components/ui/ATMButton";
 import { UserHeader } from "./UserHeader";
 import Image from "next/image";
 import { useThemeStyles } from "@/hooks/useThemeStyles";
+import { WalletLoadingScreen } from "./WalletLoadingScreen";
 
 interface SwapScreenProps {
   onNavigate: () => void;
-  onSwapComplete?: (transactionHash: string, tokenData?: {
-    fromToken: any;
-    toToken: any;
-    fromAmount: string;
-    toAmount: string;
-  }) => void;
+  onSwapComplete?: (
+    transactionHash: string,
+    tokenData?: {
+      fromToken: any;
+      toToken: any;
+      fromAmount: string;
+      toAmount: string;
+    },
+  ) => void;
 }
 
 export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
@@ -54,10 +58,11 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
       ),
     [network],
   );
-  const { data: balances, totalUsdBalance } = useTokenBalances(
-    network as SupportedNetwork,
-    networkTokens,
-  );
+  const {
+    data: balances,
+    totalUsdBalance,
+    isLoading: isBalancesLoading,
+  } = useTokenBalances(network as SupportedNetwork, networkTokens);
 
   // Get balance for from token
   const fromTokenBalance = useMemo(() => {
@@ -98,7 +103,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
         fromAmount: parseUnits(fromAmount, fromToken.decimals),
         network,
         taker: evmAddress,
-        slippageBps: slippage * 100 || 100
+        slippageBps: slippage * 100 || 100,
       });
 
       if (swapQuote) {
@@ -106,7 +111,9 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
           fromToken,
           toToken,
           fromAmount,
-          toAmount: priceData ? formatUnits(BigInt(priceData.toAmount), toToken.decimals) : "0"
+          toAmount: priceData
+            ? formatUnits(BigInt(priceData.toAmount), toToken.decimals)
+            : "0",
         };
 
         if (onSwapComplete) {
@@ -149,26 +156,30 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
     <>
       {!fromToken || selectingToToken ? (
         /* Token selection interface */
-        <TokenSelectorScreen
-          onNavigate={onNavigate}
-          onTokenSelect={(token) => {
-            if (selectingToToken) {
-              setToToken(token);
-              setSelectingToToken(false);
-            } else {
-              setFromToken(token);
+        isBalancesLoading ? (
+          <WalletLoadingScreen />
+        ) : (
+          <TokenSelectorScreen
+            onNavigate={onNavigate}
+            onTokenSelect={(token) => {
+              if (selectingToToken) {
+                setToToken(token);
+                setSelectingToToken(false);
+              } else {
+                setFromToken(token);
+              }
+            }}
+            excludeToken={selectingToToken ? fromToken : null}
+            network={network as SupportedNetwork}
+            text={
+              selectingToToken ? "Select Token to Buy" : "Select Token to Sell"
             }
-          }}
-          excludeToken={selectingToToken ? fromToken : null}
-          network={network as SupportedNetwork}
-          text={
-            selectingToToken ? "Select Token to Buy" : "Select Token to Sell"
-          }
-          balances={balances}
-          totalUsdBalance={totalUsdBalance}
-          icon="/swap-page-icon.svg"
-          onGoBack={() => setSelectingToToken(false)}
-        />
+            balances={balances}
+            totalUsdBalance={totalUsdBalance}
+            icon="/swap-page-icon.svg"
+            onGoBack={() => setSelectingToToken(false)}
+          />
+        )
       ) : (
         /* Swap interface */
         <div className="flex flex-col h-full">
@@ -333,42 +344,44 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
       )}
 
       {/* ATM Button */}
-      <div className="mt-4 w-full">
-        <ATMButton
-          onClick={() => {
-            if (!fromToken || selectingToToken) {
-              // Token selection is handled by the token list interface
-              return;
-            } else if (!toToken) {
-              // Open to token selector
-              setSelectingToToken(true);
-            } else if (priceData) {
-              // Execute swap
-              handleSwap();
+      {!isBalancesLoading && (
+        <div className="mt-4 w-full">
+          <ATMButton
+            onClick={() => {
+              if (!fromToken || selectingToToken) {
+                // Token selection is handled by the token list interface
+                return;
+              } else if (!toToken) {
+                // Open to token selector
+                setSelectingToToken(true);
+              } else if (priceData) {
+                // Execute swap
+                handleSwap();
+              }
+            }}
+            disabled={
+              isPriceLoading ||
+              (fromToken && toToken && !hasSufficientBalance) ||
+              isExecutionLoading
             }
-          }}
-          disabled={
-            isPriceLoading ||
-            (fromToken && toToken && !hasSufficientBalance) ||
-            isExecutionLoading
-          }
-          isLoading={isExecutionLoading}
-        >
-          {!fromToken
-            ? "Select Token"
-            : selectingToToken
+            isLoading={isExecutionLoading}
+          >
+            {!fromToken
               ? "Select Token"
-              : !toToken
+              : selectingToToken
                 ? "Select Token"
-                : isPriceLoading
-                  ? "Getting Quote..."
-                  : !hasSufficientBalance
-                    ? "Insufficient Balance"
-                    : !isSwapReady
-                      ? "Enter Amount"
-                      : "Trade"}
-        </ATMButton>
-      </div>
+                : !toToken
+                  ? "Select Token"
+                  : isPriceLoading
+                    ? "Getting Quote..."
+                    : !hasSufficientBalance
+                      ? "Insufficient Balance"
+                      : !isSwapReady
+                        ? "Enter Amount"
+                        : "Trade"}
+          </ATMButton>
+        </div>
+      )}
     </>
   );
 }
