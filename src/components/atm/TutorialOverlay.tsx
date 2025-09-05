@@ -26,6 +26,11 @@ const TUTORIAL_STEPS = [
   },
   {
     id: 4,
+    text: "This demo makes real onchain transactions and collects your email for authentication. See our <a href='https://www.coinbase.com/legal/privacy'>Privacy Policy for details.</a>",
+    image: null,
+  },
+  {
+    id: 5,
     text: "You're all set! Connect your wallet and start trading on base",
     image: null,
   },
@@ -61,7 +66,7 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
       {/* Content container - constrained to 390px width */}
       <div className="w-full max-w-[390px] mx-auto px-[15px] h-full relative flex flex-col">
 
-        {currentStep < 4 && (
+        {currentStep < 5 && (
           <div className="absolute top-8 right-4 z-10">
             <button
               onClick={handleSkip}
@@ -82,27 +87,64 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
           <div className="relative h-[280px]">
             {/* Panda character - bottom left, much bigger */}
             <div className="absolute bottom-0 left-0">
-              <Image
-                src="/panda.svg"
-                alt="Panda"
-                width={181}
-                height={216}
-              />
+              {
+                currentStep === 4 ? (
+                  <Image
+                    src="/panda-disclaimer.svg"
+                    alt="Panda"
+                    width={181}
+                    height={216}
+                  />
+                ) : (
+                  <Image
+                    src="/panda.svg"
+                    alt="Panda"
+                    width={181}
+                    height={216}
+                  />
+                )
+              }
             </div>
 
             {/* Speech bubble - positioned close to panda, slightly to the right */}
             <div className="absolute bottom-[210px] left-[120px]">
-              <Image
-                src="/panda-cloud.svg"
-                alt="Speech bubble"
-                width={280}
-                height={120}
-              />
+              {
+                currentStep === 4 ? (
+                  <Image
+                    src="/panda-cloud-disclaimer.svg"
+                    alt="Speech bubble"
+                    width={280}
+                    height={300}
+                  />
+                ) : (
+                  <Image
+                    src="/panda-cloud.svg"
+                    alt="Speech bubble"
+                    width={280}
+                    height={150}
+                  />
+                )
+              }
               {/* Content inside speech bubble */}
               <div className="absolute top-3 flex flex-col items-start justify-center px-4 py-2 space-y-2">
-                <p className="text-black font-pixelify text-[15px] text-left leading-relaxed max-w-[250px]">
-                  {currentStepData?.text}
-                </p>
+                {currentStep === 4 ? (
+                  <p className="text-black font-pixelify text-[13px] text-left leading-relaxed max-w-[250px]">
+                    This demo makes real onchain transactions and collects your email for authentication. See our{' '}
+                    <a 
+                      href="https://www.coinbase.com/legal/privacy" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline hover:text-blue-800"
+                    >
+                      Privacy Policy
+                    </a>{' '}
+                    for details.
+                  </p>
+                ) : (
+                  <p className="text-black font-pixelify text-[15px] text-left leading-relaxed max-w-[250px]">
+                    {currentStepData?.text}
+                  </p>
+                )}
                 {/* Step-specific image inside the cloud */}
                 {currentStepData?.image && (
                   <Image
@@ -122,7 +164,7 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
                 onClick={handleNext}
                 className="cursor-pointer flex items-center gap-2 hover:text-[#2bc876]/80 font-pixelify text-[16px] text-[#2bc876]"
               >
-                {currentStep === 4 ? "Get Started" : "Next"}
+                {currentStep === 5 ? "Get Started" : "Next"}
                 <Image
                   src="/next.svg"
                   alt="Skip"
