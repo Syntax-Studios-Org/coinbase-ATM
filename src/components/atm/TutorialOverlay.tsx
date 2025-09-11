@@ -128,17 +128,18 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
               {/* Content inside speech bubble */}
               <div className="absolute top-3 flex flex-col items-start justify-center px-4 py-2 space-y-2">
                 {currentStep === 4 ? (
-                  <p className="text-black font-pixelify text-[13px] text-left leading-relaxed max-w-[250px]">
-                    This demo makes real onchain transactions and collects your email for authentication. See our{' '}
-                    <a 
-                      href="https://www.coinbase.com/legal/privacy" 
-                      target="_blank" 
+                  <p className="text-black font-pixelify text-[13px] text-left leading-3 max-w-[250px]">
+                    This demo creates real onchain transactions. It uses email-based
+                    authentication and will collect your email for authentication
+                    purposes Learn more by visiting our{' '}
+                    <a
+                      href="https://www.coinbase.com/legal/privacy"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 underline hover:text-blue-800"
                     >
-                      Privacy Policy
-                    </a>{' '}
-                    for details.
+                      privacy policy.
+                    </a>
                   </p>
                 ) : (
                   <p className="text-black font-pixelify text-[15px] text-left leading-relaxed max-w-[250px]">

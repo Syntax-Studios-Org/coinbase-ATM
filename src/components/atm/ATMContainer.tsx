@@ -8,7 +8,13 @@ import { SwapScreen } from "./SwapScreen";
 import { TokenSelectorScreen } from "./TokenSelectorScreen";
 import { AuthScreens, type AuthScreen } from "./AuthScreens";
 import { TabNavigation, type ATMScreen } from "./TabNavigation";
-import { ActionButtons, CreditCard, DownloadCloud, Send, ArrowLeftRight } from "./ActionButtons";
+import {
+  ActionButtons,
+  CreditCard,
+  DownloadCloud,
+  Send,
+  ArrowLeftRight,
+} from "./ActionButtons";
 import { DepositTokenScreen } from "./DepositTokenScreen";
 import { BuyWithCardScreen } from "./BuyWithCardScreen";
 import { SendCryptoScreen } from "./SendCryptoScreen";
@@ -34,7 +40,9 @@ export function ATMContainer() {
   const [showSendCryptoScreen, setShowSendCryptoScreen] = useState(false);
   const [showTransactionModal, setShowTransactionModal] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string>("");
-  const [transactionType, setTransactionType] = useState<"swap" | "send">("swap");
+  const [transactionType, setTransactionType] = useState<"swap" | "send">(
+    "swap",
+  );
   const [transactionTokens, setTransactionTokens] = useState<{
     fromToken: any;
     toToken: any;
@@ -51,14 +59,26 @@ export function ATMContainer() {
   const [otp, setOtp] = useState("");
   const isSignedIn = useIsSignedIn();
   const { theme, getVar } = useThemeStyles();
-  const { showTutorial, isLoading: tutorialLoading, completeTutorial } = useTutorial();
+  const {
+    showTutorial,
+    isLoading: tutorialLoading,
+    completeTutorial,
+  } = useTutorial();
 
   const allTokens = useMemo(
-    () => Object.values(SUPPORTED_NETWORKS).flatMap((network) => Object.values(network)),
+    () =>
+      Object.values(SUPPORTED_NETWORKS).flatMap((network) =>
+        Object.values(network),
+      ),
     [],
   );
 
-  const { data: balances, totalUsdBalance, isLoading: balancesLoading } = useTokenBalances("base", allTokens);
+  const {
+    data: balances,
+    totalUsdBalance,
+    isLoading: balancesLoading,
+    refetch,
+  } = useTokenBalances("base", allTokens);
 
   const handleBuyCrypto = () => {
     setShowBuyWithCardScreen(true);
@@ -91,20 +111,12 @@ export function ATMContainer() {
 
     return (
       <>
-        <UserHeader
-          address={address}
-          isSignedIn={isSignedIn}
-        />
+        <UserHeader address={address} isSignedIn={isSignedIn} />
 
         <div className="flex flex-col items-start justify-center gap-8 w-full">
           <div className="flex flex-col items-start gap-4">
             <div className="w-8 h-8">
-              <Image
-                width={32}
-                height={32}
-                src="/thumb.svg"
-                alt="Coin Icon"
-              />
+              <Image width={32} height={32} src="/thumb.svg" alt="Coin Icon" />
             </div>
             <p
               className="w-[286px] bg-clip-text text-transparent font-pixelify font-normal text-2xl tracking-[0.48px] leading-[28.8px]"
@@ -123,7 +135,6 @@ export function ATMContainer() {
       </>
     );
   };
-
 
   const renderCardWrapper = (children: React.ReactNode) => (
     <div className="flex flex-col w-full px-[15px] py-4 h-full">
@@ -297,6 +308,11 @@ export function ATMContainer() {
               setShowBuyWithCardScreen(false);
               setShowSendCryptoScreen(false);
               setShowTransactionModal(false);
+              
+              // Refetch balances when navigating to wallet screen
+              if (tab === "wallet") {
+                refetch();
+              }
             }}
             isSignedIn={isSignedIn}
           />
@@ -333,10 +349,7 @@ export function ATMContainer() {
 
           {/* Tutorial Overlay */}
           {!tutorialLoading && (
-            <TutorialOverlay
-              isOpen={showTutorial}
-              onClose={completeTutorial}
-            />
+            <TutorialOverlay isOpen={showTutorial} onClose={completeTutorial} />
           )}
         </div>
       </div>

@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { truncateAddress } from "@/utils/format";
 import { useThemeStyles } from "@/hooks/useThemeStyles";
-import { useSignOut } from "@coinbase/cdp-hooks";
+import {
+  useEvmAddress,
+  useSignOut,
+  useExportEvmAccount,
+} from "@coinbase/cdp-hooks";
 import Image from "next/image";
 import {
   DropdownMenu,
@@ -12,7 +16,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
-import { LogOut } from "lucide-react";
+import { LogOut, Download, Loader2, Check } from "lucide-react";
 
 interface UserHeaderProps {
   address: string | null;
@@ -35,8 +39,13 @@ export function UserHeader({
 }: UserHeaderProps) {
   const { getVar } = useThemeStyles();
   const signOut = useSignOut();
+  const exportEvmAccount = useExportEvmAccount();
+  const evmAddress = useEvmAddress();
+
   const [customSlippage, setCustomSlippage] = useState(slippage.toString());
   const [addressCopied, setAddressCopied] = useState(false);
+  const [privateKeyCopied, setPrivateKeyCopied] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   if (!isSignedIn || !address) {
     return (
@@ -86,6 +95,24 @@ export function UserHeader({
     onSlippageChange?.(5);
   };
 
+  const exportPrivateKey = async () => {
+    if (evmAddress && !isExporting && !privateKeyCopied) {
+      try {
+        setIsExporting(true);
+        const { privateKey } = await exportEvmAccount({
+          evmAccount: evmAddress,
+        });
+        await navigator.clipboard.writeText(privateKey);
+        setPrivateKeyCopied(true);
+        setTimeout(() => setPrivateKeyCopied(false), 3000);
+      } catch (error) {
+        console.error("Failed to export private key:", error);
+      } finally {
+        setIsExporting(false);
+      }
+    }
+  };
+
   // Address dropdown pill component
   const AddressPill = () => (
     <DropdownMenu>
@@ -123,43 +150,68 @@ export function UserHeader({
           border: `1px solid ${getVar("borderPrimary")}`,
         }}
       >
-        <div className="flex items-center gap-3 mb-3">
-          <Image
-            src="/address-panda.png"
-            alt="Address"
-            width={32}
-            height={32}
-            className="rounded-md"
-          />
-          <div className="flex items-center gap-2 flex-1">
-            <span
-              className="text-sm font-medium"
-              style={{ color: getVar("textPrimary") }}
-            >
-              {truncateAddress(address)}
-            </span>
-            <button
-              onClick={handleCopyAddress}
-              className="p-1 hover:opacity-80 transition-opacity cursor-pointer"
-            >
-              {addressCopied ? (
-                <Image
-                  width={14}
-                  height={14}
-                  alt="copied-icon"
-                  src={"/check-tick-double.svg"}
-                />
-              ) : (
-                <Image
-                  width={14}
-                  height={14}
-                  alt="copy-icon"
-                  src={"/copy.svg"}
-                />
-              )}
-            </button>
+        <DropdownMenuItem>
+          <div className="flex items-center gap-3 mb-1">
+            <Image
+              src="/address-panda.png"
+              alt="Address"
+              width={32}
+              height={32}
+              className="rounded-md"
+            />
+            <div className="flex items-center gap-2 flex-1">
+              <span
+                className="text-sm font-medium"
+                style={{ color: getVar("textPrimary") }}
+              >
+                {truncateAddress(address)}
+              </span>
+              <button
+                onClick={handleCopyAddress}
+                className="p-1 hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                {addressCopied ? (
+                  <Image
+                    width={14}
+                    height={14}
+                    alt="copied-icon"
+                    src={"/check-tick-double.svg"}
+                  />
+                ) : (
+                  <Image
+                    width={14}
+                    height={14}
+                    alt="copy-icon"
+                    src={"/copy.svg"}
+                  />
+                )}
+              </button>
+            </div>
           </div>
-        </div>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={exportPrivateKey}
+          disabled={isExporting || privateKeyCopied}
+          title="Copy your private key to clipboard - Keep it safe!"
+          className="cursor-pointer"
+        >
+          <div className="flex items-center space-x-3 w-full p-1 cursor-pointer">
+            {isExporting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : privateKeyCopied ? (
+              <Check className="w-4 h-4 text-green-400" />
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
+            <span className="text-sm">
+              {isExporting
+                ? "Exporting..."
+                : privateKeyCopied
+                  ? "Private Key Copied!"
+                  : "Copy Private Key"}
+            </span>
+          </div>
+        </DropdownMenuItem>
         <DropdownMenuSeparator
           style={{ backgroundColor: getVar("borderPrimary") }}
         />
