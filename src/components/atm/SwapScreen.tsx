@@ -26,9 +26,10 @@ interface SwapScreenProps {
       toAmount: string;
     },
   ) => void;
+  onShowPrivateKey?: () => void;
 }
 
-export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
+export function SwapScreen({ onNavigate, onSwapComplete, onShowPrivateKey }: SwapScreenProps) {
   const evmAddress = useEvmAddress();
   const [selectingToToken, setSelectingToToken] = useState(false);
   const [slippage, setSlippage] = useState(5); // 5% default slippage
@@ -189,6 +190,7 @@ export function SwapScreen({ onNavigate, onSwapComplete }: SwapScreenProps) {
             showSettings={true}
             slippage={slippage}
             onSlippageChange={setSlippage}
+            onShowPrivateKey={onShowPrivateKey}
           />
           <div className="mb-6 mt-2">
             <p className="text-white/30 text-sm mb-3">You're trading</p>

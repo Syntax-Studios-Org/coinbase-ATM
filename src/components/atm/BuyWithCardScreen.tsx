@@ -16,9 +16,10 @@ import Image from "next/image";
 
 interface BuyWithCardScreenProps {
   onNavigate: () => void;
+  onShowPrivateKey?: () => void;
 }
 
-export function BuyWithCardScreen({ onNavigate }: BuyWithCardScreenProps) {
+export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardScreenProps) {
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState("");
   const evmAddress = useEvmAddress();
@@ -92,6 +93,7 @@ export function BuyWithCardScreen({ onNavigate }: BuyWithCardScreenProps) {
         isSignedIn={!!evmAddress}
         showGoBack={true}
         onGoBack={onNavigate}
+        onShowPrivateKey={onShowPrivateKey}
       />
 
       {/* Main content */}

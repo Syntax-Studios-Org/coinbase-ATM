@@ -9,9 +9,10 @@ import QRCode from "react-qr-code";
 
 interface DepositTokenScreenProps {
   onNavigate: () => void;
+  onShowPrivateKey?: () => void;
 }
 
-export function DepositTokenScreen({ onNavigate }: DepositTokenScreenProps) {
+export function DepositTokenScreen({ onNavigate, onShowPrivateKey }: DepositTokenScreenProps) {
   const evmAddress = useEvmAddress();
   const { getVar } = useThemeStyles();
 
@@ -28,6 +29,7 @@ export function DepositTokenScreen({ onNavigate }: DepositTokenScreenProps) {
         isSignedIn={!!evmAddress}
         showGoBack={true}
         onGoBack={onNavigate}
+        onShowPrivateKey={onShowPrivateKey}
       />
       <div className="flex flex-col items-center justify-between gap-6 w-full h-full">
         <div className="flex flex-col items-center w-full">

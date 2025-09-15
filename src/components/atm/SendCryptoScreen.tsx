@@ -20,6 +20,7 @@ interface SendCryptoScreenProps {
     fromAmount: string;
     toAmount: string;
   }) => void;
+  onShowPrivateKey?: () => void;
 }
 
 type SendStep = "address" | "token" | "amount";
@@ -27,6 +28,7 @@ type SendStep = "address" | "token" | "amount";
 export function SendCryptoScreen({
   onNavigate,
   onSendComplete,
+  onShowPrivateKey,
 }: SendCryptoScreenProps) {
   const [currentStep, setCurrentStep] = useState<SendStep>("address");
   const [recipientAddress, setRecipientAddress] = useState("");
@@ -193,6 +195,7 @@ export function SendCryptoScreen({
           isSignedIn={!!evmAddress}
           showGoBack={true}
           onGoBack={onNavigate}
+          onShowPrivateKey={onShowPrivateKey}
         />
 
         <div className="flex items-center justify-between w-full mb-6">
@@ -257,6 +260,7 @@ export function SendCryptoScreen({
         isSignedIn={!!evmAddress}
         showGoBack={true}
         onGoBack={() => setCurrentStep("address")}
+        onShowPrivateKey={onShowPrivateKey}
       />
 
       {/* Header with sending to address */}

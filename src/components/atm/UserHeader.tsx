@@ -6,7 +6,6 @@ import { useThemeStyles } from "@/hooks/useThemeStyles";
 import {
   useEvmAddress,
   useSignOut,
-  useExportEvmAccount,
 } from "@coinbase/cdp-hooks";
 import Image from "next/image";
 import {
@@ -16,7 +15,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
-import { LogOut, Download, Loader2, Check } from "lucide-react";
+import { LogOut, Download } from "lucide-react";
 
 interface UserHeaderProps {
   address: string | null;
@@ -26,6 +25,7 @@ interface UserHeaderProps {
   showSettings?: boolean;
   slippage?: number;
   onSlippageChange?: (slippage: number) => void;
+  onShowPrivateKey?: () => void;
 }
 
 export function UserHeader({
@@ -36,16 +36,14 @@ export function UserHeader({
   showSettings = false,
   slippage = 5,
   onSlippageChange,
+  onShowPrivateKey,
 }: UserHeaderProps) {
   const { getVar } = useThemeStyles();
   const signOut = useSignOut();
-  const exportEvmAccount = useExportEvmAccount();
   const evmAddress = useEvmAddress();
 
   const [customSlippage, setCustomSlippage] = useState(slippage.toString());
   const [addressCopied, setAddressCopied] = useState(false);
-  const [privateKeyCopied, setPrivateKeyCopied] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
 
   if (!isSignedIn || !address) {
     return (
@@ -95,21 +93,9 @@ export function UserHeader({
     onSlippageChange?.(5);
   };
 
-  const exportPrivateKey = async () => {
-    if (evmAddress && !isExporting && !privateKeyCopied) {
-      try {
-        setIsExporting(true);
-        const { privateKey } = await exportEvmAccount({
-          evmAccount: evmAddress,
-        });
-        await navigator.clipboard.writeText(privateKey);
-        setPrivateKeyCopied(true);
-        setTimeout(() => setPrivateKeyCopied(false), 3000);
-      } catch (error) {
-        console.error("Failed to export private key:", error);
-      } finally {
-        setIsExporting(false);
-      }
+  const exportPrivateKey = () => {
+    if (onShowPrivateKey) {
+      onShowPrivateKey();
     }
   };
 
@@ -191,25 +177,12 @@ export function UserHeader({
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={exportPrivateKey}
-          disabled={isExporting || privateKeyCopied}
-          title="Copy your private key to clipboard - Keep it safe!"
+          title="View your private key - Keep it safe!"
           className="cursor-pointer"
         >
           <div className="flex items-center space-x-3 w-full p-1 cursor-pointer">
-            {isExporting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : privateKeyCopied ? (
-              <Check className="w-4 h-4 text-green-400" />
-            ) : (
-              <Download className="w-4 h-4" />
-            )}
-            <span className="text-sm">
-              {isExporting
-                ? "Exporting..."
-                : privateKeyCopied
-                  ? "Private Key Copied!"
-                  : "Copy Private Key"}
-            </span>
+            <Download className="w-4 h-4" />
+            <span className="text-sm">View Private Key</span>
           </div>
         </DropdownMenuItem>
         <DropdownMenuSeparator
@@ -345,6 +318,7 @@ export function UserHeader({
         className="w-full h-px"
         style={{ backgroundColor: getVar("borderSecondary") }}
       ></div>
+
     </div>
   );
 }

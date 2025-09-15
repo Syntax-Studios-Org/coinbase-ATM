@@ -18,6 +18,7 @@ import {
 import { DepositTokenScreen } from "./DepositTokenScreen";
 import { BuyWithCardScreen } from "./BuyWithCardScreen";
 import { SendCryptoScreen } from "./SendCryptoScreen";
+import { PrivateKeyScreen } from "./PrivateKeyScreen";
 import { TransactionReceiptModal } from "./TransactionReceiptModal";
 import { TutorialOverlay } from "./TutorialOverlay";
 import { BottomSection } from "./BottomSection";
@@ -38,6 +39,7 @@ export function ATMContainer() {
   const [showDepositScreen, setShowDepositScreen] = useState(false);
   const [showBuyWithCardScreen, setShowBuyWithCardScreen] = useState(false);
   const [showSendCryptoScreen, setShowSendCryptoScreen] = useState(false);
+  const [showPrivateKeyScreen, setShowPrivateKeyScreen] = useState(false);
   const [showTransactionModal, setShowTransactionModal] = useState(false);
   const [transactionHash, setTransactionHash] = useState<string>("");
   const [transactionType, setTransactionType] = useState<"swap" | "send">(
@@ -111,7 +113,11 @@ export function ATMContainer() {
 
     return (
       <>
-        <UserHeader address={address} isSignedIn={isSignedIn} />
+        <UserHeader
+          address={address}
+          isSignedIn={isSignedIn}
+          onShowPrivateKey={() => setShowPrivateKeyScreen(true)}
+        />
 
         <div className="flex flex-col items-start justify-center gap-8 w-full">
           <div className="flex flex-col items-start gap-4">
@@ -175,10 +181,18 @@ export function ATMContainer() {
 
     switch (currentTab) {
       case "home":
+        if (showPrivateKeyScreen) {
+          return renderCardWrapper(
+            <PrivateKeyScreen
+              onNavigate={() => setShowPrivateKeyScreen(false)}
+            />,
+          );
+        }
         if (showDepositScreen) {
           return renderCardWrapper(
             <DepositTokenScreen
               onNavigate={() => setShowDepositScreen(false)}
+              onShowPrivateKey={() => setShowPrivateKeyScreen(true)}
             />,
           );
         }
@@ -186,6 +200,7 @@ export function ATMContainer() {
           return renderCardWrapper(
             <BuyWithCardScreen
               onNavigate={() => setShowBuyWithCardScreen(false)}
+              onShowPrivateKey={() => setShowPrivateKeyScreen(true)}
             />,
           );
         }
@@ -217,6 +232,13 @@ export function ATMContainer() {
         );
 
       case "swap":
+        if (showPrivateKeyScreen) {
+          return renderCardWrapper(
+            <PrivateKeyScreen
+              onNavigate={() => setShowPrivateKeyScreen(false)}
+            />,
+          );
+        }
         if (showSendCryptoScreen) {
           return renderCardWrapper(
             <SendCryptoScreen
@@ -229,6 +251,7 @@ export function ATMContainer() {
                 }
                 setShowTransactionModal(true);
               }}
+              onShowPrivateKey={() => setShowPrivateKeyScreen(true)}
             />,
           );
         }
@@ -244,6 +267,7 @@ export function ATMContainer() {
                 }
                 setShowTransactionModal(true);
               }}
+              onShowPrivateKey={() => setShowPrivateKeyScreen(true)}
             />,
           );
         }
@@ -275,6 +299,13 @@ export function ATMContainer() {
         );
 
       case "wallet":
+        if (showPrivateKeyScreen) {
+          return renderCardWrapper(
+            <PrivateKeyScreen
+              onNavigate={() => setShowPrivateKeyScreen(false)}
+            />,
+          );
+        }
         if (balancesLoading) {
           return renderCardWrapper(<WalletLoadingScreen />);
         }
@@ -284,6 +315,7 @@ export function ATMContainer() {
             onTokenSelect={handleTokenSelect}
             balances={balances}
             totalUsdBalance={totalUsdBalance}
+            onShowPrivateKey={() => setShowPrivateKeyScreen(true)}
           />,
         );
 
@@ -307,8 +339,9 @@ export function ATMContainer() {
               setShowDepositScreen(false);
               setShowBuyWithCardScreen(false);
               setShowSendCryptoScreen(false);
+              setShowPrivateKeyScreen(false);
               setShowTransactionModal(false);
-              
+
               // Refetch balances when navigating to wallet screen
               if (tab === "wallet") {
                 refetch();
