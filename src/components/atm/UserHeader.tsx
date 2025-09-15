@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/DropdownMenu";
-import { LogOut, Download } from "lucide-react";
+import { LogOut, Download, ChevronDown } from "lucide-react";
 
 interface UserHeaderProps {
   address: string | null;
@@ -40,7 +40,6 @@ export function UserHeader({
 }: UserHeaderProps) {
   const { getVar } = useThemeStyles();
   const signOut = useSignOut();
-  const evmAddress = useEvmAddress();
 
   const [customSlippage, setCustomSlippage] = useState(slippage.toString());
   const [addressCopied, setAddressCopied] = useState(false);
@@ -126,6 +125,7 @@ export function UserHeader({
           >
             {truncateAddress(address)}
           </span>
+          <ChevronDown className="w-4 h-4" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

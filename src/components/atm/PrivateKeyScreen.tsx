@@ -16,7 +16,6 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
   const [isKeyVisible, setIsKeyVisible] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
-  const [hasExported, setHasExported] = useState(false);
 
   const { getVar } = useThemeStyles();
   const exportEvmAccount = useExportEvmAccount();
@@ -27,9 +26,18 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
 
     try {
       setIsExporting(true);
-      const { privateKey: exportedKey } = await exportEvmAccount({ evmAccount: evmAddress });
+      const { privateKey: exportedKey } = await exportEvmAccount({
+        evmAccount: evmAddress,
+      });
       setPrivateKey(exportedKey);
-      setHasExported(true);
+
+      try {
+        await navigator.clipboard.writeText(exportedKey);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      } catch (error) {
+        console.error("Failed to copy to clipboard:", error);
+      }
     } catch (error) {
       console.error("Failed to export private key:", error);
     } finally {
@@ -38,7 +46,11 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
   };
 
   const handleCopyToClipboard = async () => {
-    if (!privateKey || isCopied) return;
+    if (isCopied) return;
+
+    if (!privateKey) {
+      await handleExportPrivateKey();
+    }
 
     try {
       await navigator.clipboard.writeText(privateKey);
@@ -52,15 +64,9 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
   const handleClose = () => {
     setPrivateKey("");
     setIsKeyVisible(false);
-    setHasExported(false);
     setIsCopied(false);
     onNavigate();
   };
-
-  // Export private key when component mounts
-  if (!hasExported && !isExporting) {
-    handleExportPrivateKey();
-  }
 
   return (
     <div className="flex flex-col items-center h-full w-full gap-3">
@@ -137,8 +143,8 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
           {/* Copy button */}
           <button
             onClick={handleCopyToClipboard}
-            disabled={!privateKey || isExporting}
-            className="px-4 py-2 rounded-lg font-pixelify text-sm transition-colors disabled:opacity-50"
+            disabled={isExporting}
+            className="px-4 py-2 rounded-lg font-pixelify text-sm transition-colors disabled:opacity-50 cursor-pointer"
             style={{
               backgroundColor: getVar("primaryDark"),
               color: getVar("textPrimary"),
