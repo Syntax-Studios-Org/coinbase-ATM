@@ -16,6 +16,7 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
   const [isKeyVisible, setIsKeyVisible] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [hasExported, setHasExported] = useState(false);
 
   const { getVar } = useThemeStyles();
   const exportEvmAccount = useExportEvmAccount();
@@ -30,6 +31,7 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
         evmAccount: evmAddress,
       });
       setPrivateKey(exportedKey);
+      setHasExported(true);
 
       try {
         await navigator.clipboard.writeText(exportedKey);
@@ -64,6 +66,7 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
   const handleClose = () => {
     setPrivateKey("");
     setIsKeyVisible(false);
+    setHasExported(false);
     setIsCopied(false);
     onNavigate();
   };
@@ -96,63 +99,89 @@ export function PrivateKeyScreen({ onNavigate }: PrivateKeyScreenProps) {
           </p>
         </div>
 
-        {/* Private key display */}
         <div className="flex-1 flex flex-col justify-center w-full gap-4">
-          <div
-            className="relative w-full p-4 rounded-lg"
-            style={{
-              border: "1px solid #292B30",
-              backgroundColor: getVar("inputBackground"),
-            }}
-          >
-            <div className="pr-10">
-              {isExporting ? (
-                <div className="flex items-center justify-center py-4">
-                  <div
-                    className="animate-spin rounded-full h-6 w-6 border-b-2"
-                    style={{ borderColor: getVar("textAccent") }}
-                  ></div>
-                </div>
-              ) : (
+          {!hasExported ? (
+            <div className="flex flex-col items-center gap-4">
+              <div
+                className="w-full p-8 rounded-lg text-center"
+                style={{
+                  border: "1px solid #292B30",
+                  backgroundColor: getVar("inputBackground"),
+                }}
+              >
                 <p
-                  className="font-mono text-sm break-all"
-                  style={{
-                    color: getVar("textPrimary"),
-                    filter: isKeyVisible ? "none" : "blur(4px)",
-                  }}
+                  className="font-pixelify text-sm"
+                  style={{ color: getVar("textSecondary") }}
                 >
-                  {privateKey || "Loading..."}
+                  Click below to reveal your private key
                 </p>
-              )}
+              </div>
+
+              <button
+                onClick={async () => {
+                  await handleExportPrivateKey();
+                  setIsKeyVisible(true);
+                }}
+                disabled={isExporting}
+                className="px-6 py-3 rounded-lg font-pixelify text-sm transition-colors disabled:opacity-50 cursor-pointer"
+                style={{
+                  backgroundColor: getVar("primaryDark"),
+                  color: getVar("textPrimary"),
+                  border: `1px solid ${getVar("borderAccent")}`,
+                }}
+              >
+                {isExporting ? "Revealing..." : "Reveal Private Key"}
+              </button>
             </div>
+          ) : (
+            <>
+              <div
+                className="relative w-full p-4 rounded-lg"
+                style={{
+                  border: "1px solid #292B30",
+                  backgroundColor: getVar("inputBackground"),
+                }}
+              >
+                <div className="pr-10">
+                  <p
+                    className="font-mono text-sm break-all"
+                    style={{
+                      color: getVar("textPrimary"),
+                      filter: isKeyVisible ? "none" : "blur(4px)",
+                    }}
+                  >
+                    {privateKey}
+                  </p>
+                </div>
 
-            {/* Eye icon */}
-            <button
-              onClick={() => setIsKeyVisible(!isKeyVisible)}
-              className="absolute bottom-3 right-3 p-1 hover:opacity-70"
-              disabled={isExporting || !privateKey}
-            >
-              {isKeyVisible ? (
-                <Eye size={16} style={{ color: getVar("textMuted") }} />
-              ) : (
-                <EyeOff size={16} style={{ color: getVar("textMuted") }} />
-              )}
-            </button>
-          </div>
+                {/* Eye icon */}
+                <button
+                  onClick={() => setIsKeyVisible(!isKeyVisible)}
+                  className="absolute bottom-3 cursor-pointer right-3 p-1 hover:opacity-70"
+                >
+                  {isKeyVisible ? (
+                    <Eye size={16} style={{ color: getVar("textMuted") }} />
+                  ) : (
+                    <EyeOff size={16} style={{ color: getVar("textMuted") }} />
+                  )}
+                </button>
+              </div>
 
-          {/* Copy button */}
-          <button
-            onClick={handleCopyToClipboard}
-            disabled={isExporting}
-            className="px-4 py-2 rounded-lg font-pixelify text-sm transition-colors disabled:opacity-50 cursor-pointer"
-            style={{
-              backgroundColor: getVar("primaryDark"),
-              color: getVar("textPrimary"),
-              border: `1px solid ${getVar("borderAccent")}`,
-            }}
-          >
-            {isCopied ? "Copied!" : "Copy to Clipboard"}
-          </button>
+              {/* Copy button */}
+              <button
+                onClick={handleCopyToClipboard}
+                disabled={isCopied}
+                className="px-4 py-2 rounded-lg cursor-pointer font-pixelify text-sm transition-colors disabled:opacity-50"
+                style={{
+                  backgroundColor: getVar("primaryDark"),
+                  color: getVar("textPrimary"),
+                  border: `1px solid ${getVar("borderAccent")}`,
+                }}
+              >
+                {isCopied ? "Copied!" : "Copy to Clipboard"}
+              </button>
+            </>
+          )}
         </div>
       </div>
 
