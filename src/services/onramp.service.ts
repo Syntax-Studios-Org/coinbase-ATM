@@ -8,8 +8,7 @@ import type { Address } from "viem";
 import { clientEnv } from "@/config/client.env";
 
 export class OnrampService {
-  private static readonly COINBASE_PAY_BASE_URL =
-    "https://pay-sandbox.coinbase.com";
+  private static readonly COINBASE_PAY_BASE_URL = "https://pay.coinbase.com";
   private static readonly BASE_MAINNET = "base";
   private static readonly USDC_ASSET = "USDC";
   private static readonly DEFAULT_FIAT_CURRENCY = "USD";
