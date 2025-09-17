@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useEvmAddress } from "@coinbase/cdp-hooks";
 import { useThemeStyles } from "@/hooks/useThemeStyles";
 import { useOnramp } from "@/hooks/useOnramp";
@@ -13,29 +13,51 @@ import { useMemo } from "react";
 import type { Token } from "@/types/swap";
 import type { SupportedOnrampAsset } from "@/types/onramp";
 import Image from "next/image";
+import { WalletLoadingScreen } from "./WalletLoadingScreen";
 
 interface BuyWithCardScreenProps {
   onNavigate: () => void;
   onShowPrivateKey?: () => void;
 }
 
-export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardScreenProps) {
+export function BuyWithCardScreen({
+  onNavigate,
+  onShowPrivateKey,
+}: BuyWithCardScreenProps) {
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState("");
   const evmAddress = useEvmAddress();
   const { getVar } = useThemeStyles();
   const { generateOnrampUrl, state } = useOnramp();
+  const [displayWidth, setDisplayWidth] = useState(0);
+  const measureRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (measureRef.current) {
+      setDisplayWidth(measureRef.current.offsetWidth);
+    }
+  }, [amount]);
 
   const allTokens = useMemo(
-    () => Object.values(SUPPORTED_NETWORKS).flatMap((network) => Object.values(network)),
+    () =>
+      Object.values(SUPPORTED_NETWORKS).flatMap((network) =>
+        Object.values(network),
+      ),
     [],
   );
 
-  const { data: balances } = useTokenBalances("base", allTokens);
+  const { data: balances, isLoading: isBalancesLoading } = useTokenBalances(
+    "base",
+    allTokens,
+  );
 
   const totalBalance = useMemo(
-    () => balances?.reduce((total, balance) => total + (balance.usdValue || 0), 0) || 0,
-    [balances]
+    () =>
+      balances?.reduce(
+        (total, balance) => total + (balance.usdValue || 0),
+        0,
+      ) || 0,
+    [balances],
   );
 
   const handleTokenSelect = (token: Token) => {
@@ -73,7 +95,9 @@ export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardS
   };
 
   if (!selectedToken) {
-    return (
+    return isBalancesLoading ? (
+      <WalletLoadingScreen />
+    ) : (
       <TokenSelectorScreen
         onNavigate={onNavigate}
         onTokenSelect={handleTokenSelect}
@@ -102,7 +126,7 @@ export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardS
         <div className="w-full text-center">
           <p
             className="font-pixelify text-xl mb-4"
-            style={{ color: getVar('textPrimary') }}
+            style={{ color: getVar("textPrimary") }}
           >
             You're buying
           </p>
@@ -112,7 +136,7 @@ export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardS
             {/* Token pill */}
             <div
               className="flex items-center gap-2 px-3 py-2 rounded-full"
-              style={{ backgroundColor: getVar('primaryDark') }}
+              style={{ backgroundColor: getVar("primaryDark") }}
             >
               <Image
                 src={selectedToken.logoUrl!}
@@ -123,7 +147,7 @@ export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardS
               />
               <span
                 className="font-pixelify text-sm"
-                style={{ color: getVar('textPrimary') }}
+                style={{ color: getVar("textPrimary") }}
               >
                 {selectedToken.symbol}
               </span>
@@ -131,7 +155,7 @@ export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardS
 
             <span
               className="font-pixelify text-sm"
-              style={{ color: getVar('textMuted') }}
+              style={{ color: getVar("textMuted") }}
             >
               on
             </span>
@@ -139,7 +163,7 @@ export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardS
             {/* Network pill */}
             <div
               className="flex items-center gap-2 px-3 py-2 rounded-full"
-              style={{ backgroundColor: getVar('primaryDark') }}
+              style={{ backgroundColor: getVar("primaryDark") }}
             >
               <Image
                 src="/icons/base.svg"
@@ -150,7 +174,7 @@ export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardS
               />
               <span
                 className="font-pixelify text-sm"
-                style={{ color: getVar('textPrimary') }}
+                style={{ color: getVar("textPrimary") }}
               >
                 Base
               </span>
@@ -160,28 +184,34 @@ export function BuyWithCardScreen({ onNavigate, onShowPrivateKey }: BuyWithCardS
 
         {/* Amount input */}
         <div className="flex flex-col items-center gap-2 w-full mt-5">
-          <div className="flex items-start max-h-[56px] leading-none">
-            <p
-              className="font-pixelify font-normal text-2xl opacity-60 mt-[6px]"
-              style={{ color: getVar("textAccent") }}
-            >
-              $
-            </p>
+          <div className="relative flex justify-center w-full max-w-[384px]">
+            {/* Ghost (visual rendering) */}
+            <div className="pointer-events-none select-none text-center">
+              <span
+                className="font-pixelify font-normal text-2xl opacity-60 align-top relative top-1"
+                style={{ color: getVar("textAccent") }}
+              >
+                $
+              </span>
+              <span
+                className="font-pixelify font-normal text-[56px] leading-none"
+                style={{ color: getVar("textAccent") }}
+              >
+                {amount || "0.00"}
+              </span>
+            </div>
+
+            {/* Input overlay (invisible text, visible caret) */}
             <input
               type="text"
               value={amount}
               onChange={(e) => handleAmountChange(e.target.value)}
-              placeholder="0.00"
-              className="font-pixelify font-normal text-[56px] leading-none bg-transparent border-none outline-none min-w-0 flex-1"
-              style={{
-                color: getVar("textAccent"),
-                maxWidth: "120px",
-              }}
+              placeholder=""
+              style={{ caretColor: getVar("textAccent") }}
+              className="absolute inset-0 w-full h-full text-center bg-transparent border-none outline-none font-pixelify font-normal text-[56px] leading-none caret-current text-transparent"
             />
           </div>
         </div>
-
-
       </div>
 
       {/* Request link button */}
