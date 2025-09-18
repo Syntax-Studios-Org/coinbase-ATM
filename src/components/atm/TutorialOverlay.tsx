@@ -51,7 +51,9 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
     onClose();
   };
 
-  const currentStepData = TUTORIAL_STEPS.find(step => step.id === currentStep);
+  const currentStepData = TUTORIAL_STEPS.find(
+    (step) => step.id === currentStep,
+  );
 
   if (!isOpen) return null;
 
@@ -59,13 +61,13 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{
-        background: "radial-gradient(50% 294.9% at 50% 50%, rgba(9, 20, 14, 0.7) 0%, rgba(5, 10, 7, 0.7) 100%)",
+        background:
+          "radial-gradient(50% 294.9% at 50% 50%, rgba(9, 20, 14, 0.7) 0%, rgba(5, 10, 7, 0.7) 100%)",
         backdropFilter: "blur(9px)",
       }}
     >
       {/* Content container - constrained to 390px width */}
       <div className="w-full max-w-[390px] mx-auto px-[15px] h-full relative flex flex-col">
-
         {currentStep < 5 && (
           <div className="absolute top-8 right-4 z-10">
             <button
@@ -87,59 +89,46 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
           <div className="relative h-[280px]">
             {/* Panda character - bottom left, much bigger */}
             <div className="absolute bottom-0 left-0">
-              {
-                currentStep === 4 ? (
-                  <Image
-                    src="/panda-disclaimer.svg"
-                    alt="Panda"
-                    width={181}
-                    height={216}
-                  />
-                ) : (
-                  <Image
-                    src="/panda.svg"
-                    alt="Panda"
-                    width={181}
-                    height={216}
-                  />
-                )
-              }
+              {currentStep === 4 ? (
+                <Image
+                  src="/panda-disclaimer.svg"
+                  alt="Panda"
+                  width={181}
+                  height={216}
+                />
+              ) : (
+                <Image src="/panda.svg" alt="Panda" width={181} height={216} />
+              )}
             </div>
 
             {/* Speech bubble - positioned close to panda, slightly to the right */}
             <div className="absolute bottom-[210px] left-[120px]">
-              {
-                currentStep === 4 ? (
-                  <Image
-                    src="/panda-cloud-disclaimer.svg"
-                    alt="Speech bubble"
-                    width={280}
-                    height={300}
-                  />
-                ) : (
-                  <Image
-                    src="/panda-cloud.svg"
-                    alt="Speech bubble"
-                    width={280}
-                    height={150}
-                  />
-                )
-              }
+              {currentStep === 4 ? (
+                <Image
+                  src="/panda-cloud-disclaimer.svg"
+                  alt="Speech bubble"
+                  width={280}
+                  height={500}
+                />
+              ) : (
+                <Image
+                  src="/panda-cloud.svg"
+                  alt="Speech bubble"
+                  width={280}
+                  height={150}
+                />
+              )}
               {/* Content inside speech bubble */}
               <div className="absolute top-3 flex flex-col items-start justify-center px-4 py-2 space-y-2">
                 {currentStep === 4 ? (
-                  <p className="text-black font-pixelify text-[13px] text-left leading-3 max-w-[250px]">
-                    This demo creates real onchain transactions. It uses email-based
-                    authentication and will collect your email for authentication
-                    purposes Learn more by visiting our{' '}
-                    <a
-                      href="https://www.coinbase.com/legal/privacy"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 underline hover:text-blue-800"
-                    >
-                      privacy policy.
-                    </a>
+                  <p className="text-black font-pixelify text-[13px] text-left leading-3.5 max-w-[250px]">
+                    By clicking "Request Verification Code," you agree that this
+                    demo App is provided AS-IS and that your use is subject to
+                    the CDP ToS, and you acknowledge that (1) your data is
+                    governed by Coinbase's Privacy Policy; (2) onchain data is
+                    public and immutable, and (3) your IP address may be used
+                    for geofencing access control. We recommend only using
+                    minimal funds to avoid potential loss.
                   </p>
                 ) : (
                   <p className="text-black font-pixelify text-[15px] text-left leading-relaxed max-w-[250px]">
@@ -166,12 +155,7 @@ export function TutorialOverlay({ isOpen, onClose }: TutorialOverlayProps) {
                 className="cursor-pointer flex items-center gap-2 hover:text-[#2bc876]/80 font-pixelify text-[16px] text-[#2bc876]"
               >
                 {currentStep === 5 ? "Get Started" : "Next"}
-                <Image
-                  src="/next.svg"
-                  alt="Skip"
-                  width={16}
-                  height={16}
-                />
+                <Image src="/next.svg" alt="Skip" width={16} height={16} />
               </button>
             </div>
           </div>
